@@ -113,7 +113,7 @@
         <div class="filter">
             <input type="text" id="filterName" placeholder="Cari Nama Karyawan" onkeyup="filterTable()">
             <button onclick="addEmployee()">Tambah Karyawan</button>
-            <button onclick="importData()">Import Data</button>
+            <input type="file" id="importFile" onchange="importData(event)" />
             <button onclick="exportData()">Export Data</button>
         </div>
 
@@ -199,17 +199,82 @@
 
         // Add Employee Functionality
         function addEmployee() {
-            alert("Fitur tambah karyawan belum tersedia.");
+            const employee = {
+                name: "New Employee",
+                nik: "00000",
+                position: "Staff",
+                serviceManager: "Manager",
+                region: "Unknown",
+                cluster: "A",
+                phone: "0000000000",
+                email: "new@company.com",
+                ktp: "123456789",
+                status: "not yet"
+            };
+            employees.push(employee);
+            loadEmployeeData();
         }
 
-        // Import Data Functionality
-        function importData() {
-            alert("Fitur impor data belum tersedia.");
+        // Import Data Functionality (CSV)
+        function importData(event) {
+            const file = event.target.files[0];
+            if (file && file.name.endsWith(".csv")) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = e.target.result;
+                    const rows = data.split("\n").map(row => row.split(","));
+                    employees = rows.slice(1).map(row => ({
+                        name: row[0],
+                        nik: row[1],
+                        position: row[2],
+                        serviceManager: row[3],
+                        region: row[4],
+                        cluster: row[5],
+                        phone: row[6],
+                        email: row[7],
+                        ktp: row[8],
+                        status: row[9]
+                    }));
+                    loadEmployeeData();
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Format file harus CSV!");
+            }
         }
 
-        // Export Data Functionality
+        // Export Data Functionality (CSV)
         function exportData() {
-            alert("Fitur ekspor data belum tersedia.");
+            let csvContent = "Nama Karyawan,NIK,Position,Service Manager,Region,Cluster,No HP,Email,No KTP,Status Lisence\n";
+            employees.forEach(employee => {
+                csvContent += `${employee.name},${employee.nik},${employee.position},${employee.serviceManager},${employee.region},${employee.cluster},${employee.phone},${employee.email},${employee.ktp},${employee.status}\n`;
+            });
+            
+            const blob = new Blob([csvContent], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "employee_data.csv";
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Edit Employee Functionality
+        function editEmployee(index) {
+            const employee = employees[index];
+            const newName = prompt("Edit Nama Karyawan", employee.name);
+            if (newName) {
+                employee.name = newName;
+                loadEmployeeData();
+            }
+        }
+
+        // Delete Employee Functionality
+        function deleteEmployee(index) {
+            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
+                employees.splice(index, 1);
+                loadEmployeeData();
+            }
         }
 
         // Filter Table Functionality
@@ -232,14 +297,9 @@
 
         // Load Employee Data Functionality
         function loadEmployeeData() {
-            employees = [
-                { name: "John Doe", nik: "12345", position: "Manager", serviceManager: "Jane Smith", region: "West", cluster: "A", phone: "08123456789", email: "john@company.com", ktp: "987654321", status: "not yet" },
-                { name: "Jane Smith", nik: "67890", position: "Staff", serviceManager: "John Doe", region: "East", cluster: "B", phone: "08987654321", email: "jane@company.com", ktp: "123456789", status: "completed" }
-            ];
-
             const tableBody = document.querySelector("#employeeTable tbody");
             tableBody.innerHTML = "";
-            employees.forEach(employee => {
+            employees.forEach((employee, index) => {
                 const row = document.createElement("tr");
                 row.innerHTML = `
                     <td>${employee.name}</td>
@@ -252,14 +312,14 @@
                     <td>${employee.email}</td>
                     <td>${employee.ktp}</td>
                     <td>
-                        <select>
+                        <select onchange="employee.status = this.value">
                             <option value="not yet" ${employee.status === 'not yet' ? 'selected' : ''}>Not Yet</option>
                             <option value="completed" ${employee.status === 'completed' ? 'selected' : ''}>Completed</option>
                         </select>
                     </td>
                     <td>
-                        <button class="action-btn">Edit</button>
-                        <button class="action-btn">Delete</button>
+                        <button class="action-btn" onclick="editEmployee(${index})">Edit</button>
+                        <button class="action-btn" onclick="deleteEmployee(${index})">Delete</button>
                     </td>
                 `;
                 tableBody.appendChild(row);
