@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id-ID">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PT HARAPAN UTAMA PRIMA - Manajemen Karyawan</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #ff66b2;
+      padding: 20px;
+      text-align: center;
+      color: white;
+    }
+    .container {
+      width: 80%;
+      margin: 20px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #ff66b2;
+      color: white;
+    }
+    .btn {
+      background-color: #ff66b2;
+      color: white;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn:hover {
+      background-color: #ff3385;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .form-group input[type="file"] {
+      padding: 3px;
+    }
+    .form-group button {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>PT HARAPAN UTAMA PRIMA</h1>
+  <p>Manajemen Data Karyawan</p>
+</header>
+
+<div class="container">
+  <!-- Form Login -->
+  <div id="login-form">
+    <h2>Login</h2>
+    <div class="form-group">
+      <label for="login-email">Email</label>
+      <input type="email" id="login-email" placeholder="Masukkan email" required>
+    </div>
+    <div class="form-group">
+      <label for="login-password">Kata Sandi</label>
+      <input type="password" id="login-password" placeholder="Masukkan kata sandi" required>
+    </div>
+    <button class="btn" onclick="login()">Masuk</button>
+    <p>Belum punya akun? <a href="javascript:void(0);" onclick="showRegisterForm()">Daftar</a></p>
+  </div>
+
+  <!-- Form Register -->
+  <div id="register-form" style="display: none;">
+    <h2>Daftar Pengguna Baru</h2>
+    <div class="form-group">
+      <label for="register-email">Email</label>
+      <input type="email" id="register-email" placeholder="Masukkan email" required>
+    </div>
+    <div class="form-group">
+      <label for="register-password">Kata Sandi</label>
+      <input type="password" id="register-password" placeholder="Masukkan kata sandi" required>
+    </div>
+    <button class="btn" onclick="register()">Daftar</button>
+    <p>Sudah punya akun? <a href="javascript:void(0);" onclick="showLoginForm()">Masuk</a></p>
+  </div>
+
+  <!-- Data Karyawan -->
+  <div id="employee-data" style="display: none;">
+    <h2>Data Karyawan</h2>
+    <button class="btn" onclick="addEmployee()">Tambah Karyawan</button>
+    <button class="btn" onclick="importData()">Impor Data Excel</button>
+    <button class="btn" onclick="exportData()">Ekspor Data Excel</button>
+    <input type="text" id="search" placeholder="Cari..." oninput="filterData()">
+    <table>
+      <thead>
+        <tr>
+          <th>Nama</th>
+          <th>NIK</th>
+          <th>Posisi</th>
+          <th>Service Manager</th>
+          <th>Region</th>
+          <th>Cluster</th>
+          <th>No HP</th>
+          <th>Email</th>
+          <th>No KTP</th>
+          <th>Status Lisensi</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="employee-table-body">
+        <!-- Data karyawan akan ditampilkan di sini -->
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+  // Simulasi penyimpanan data pengguna dan karyawan
+  const users = [];
+  const employees = [];
+
+  // Menampilkan form login
+  function showLoginForm() {
+    document.getElementById('login-form').style.display = 'block';
+    document.getElementById('register-form').style.display = 'none';
+  }
+
+  // Menampilkan form registrasi
+  function showRegisterForm() {
+    document.getElementById('login-form').style.display = 'none';
+    document.getElementById('register-form').style.display = 'block';
+  }
+
+  // Fungsi registrasi
+  function register() {
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+
+    if (!email || !password) {
+      alert('Email dan kata sandi harus diisi!');
+      return;
+    }
+
+    // Simpan data pengguna
+    users.push({ email, password });
+    alert('Registrasi berhasil! Silakan login.');
+    showLoginForm();
+  }
+
+  // Fungsi login
+  function login() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      alert('Email dan kata sandi harus diisi!');
+      return;
+    }
+
+    // Cek kredensial pengguna
+    const user = users.find(u => u.email === email && u.password === password);
+    if (user) {
+      alert('Login berhasil!');
+      showEmployeeData();
+    } else {
+      alert('Email atau kata sandi salah!');
+    }
+  }
+
+  // Menampilkan data karyawan
+  function show
+::contentReference[oaicite:0]{index=0}
+ 
