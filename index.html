@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PT HARAPAN UTAMA PRIMA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script> <!-- SheetJS -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -26,7 +27,7 @@
             text-align: left;
             width: 300px;
         }
-        input {
+        input, button {
             padding: 10px;
             margin: 10px;
             width: 100%;
@@ -34,13 +35,13 @@
             border-radius: 5px;
         }
         button {
-            padding: 10px 20px;
             background-color: #ff4f91;
             color: white;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            width: 100%;
+        }
+        button:hover {
+            background-color: #e0437c;
         }
         #afterLogin {
             display: none;
@@ -64,6 +65,15 @@
         }
         .action-btn {
             margin-right: 10px;
+            padding: 5px 10px;
+            background-color: #ff4f91;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .action-btn:hover {
+            background-color: #e0437c;
         }
         .filter {
             display: flex;
@@ -73,6 +83,19 @@
         .filter input {
             width: 200px;
             padding: 10px;
+        }
+        .filter button {
+            width: auto;
+        }
+        #importFile {
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        #importFile:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -143,7 +166,7 @@
     </div>
 
     <script>
-        let users = [];
+        let users = JSON.parse(localStorage.getItem('users')) || [];
         let employees = [];
 
         // Halaman Register
@@ -186,6 +209,7 @@
                 alert("Username sudah terdaftar!");
             } else {
                 users.push({ username, password });
+                localStorage.setItem('users', JSON.stringify(users));
                 alert("Akun berhasil dibuat! Silakan login.");
                 showLogin();
             }
@@ -215,48 +239,31 @@
             loadEmployeeData();
         }
 
-        // Import Data Functionality (CSV)
+        // Import Data Functionality (Excel)
         function importData(event) {
             const file = event.target.files[0];
-            if (file && file.name.endsWith(".csv")) {
+            if (file && file.name.endsWith(".xlsx")) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const data = e.target.result;
-                    const rows = data.split("\n").map(row => row.split(","));
-                    employees = rows.slice(1).map(row => ({
-                        name: row[0],
-                        nik: row[1],
-                        position: row[2],
-                        serviceManager: row[3],
-                        region: row[4],
-                        cluster: row[5],
-                        phone: row[6],
-                        email: row[7],
-                        ktp: row[8],
-                        status: row[9]
-                    }));
+                    const workbook = XLSX.read(data, { type: 'binary' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    employees = jsonData;
                     loadEmployeeData();
                 };
-                reader.readAsText(file);
+                reader.readAsBinaryString(file);
             } else {
-                alert("Format file harus CSV!");
+                alert("Format file harus XLSX!");
             }
         }
 
-        // Export Data Functionality (CSV)
+        // Export Data Functionality (Excel)
         function exportData() {
-            let csvContent = "Nama Karyawan,NIK,Position,Service Manager,Region,Cluster,No HP,Email,No KTP,Status Lisence\n";
-            employees.forEach(employee => {
-                csvContent += `${employee.name},${employee.nik},${employee.position},${employee.serviceManager},${employee.region},${employee.cluster},${employee.phone},${employee.email},${employee.ktp},${employee.status}\n`;
-            });
-            
-            const blob = new Blob([csvContent], { type: "text/csv" });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "employee_data.csv";
-            link.click();
-            URL.revokeObjectURL(url);
+            const ws = XLSX.utils.json_to_sheet(employees);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Employees");
+            XLSX.writeFile(wb, "employee_data.xlsx");
         }
 
         // Edit Employee Functionality
