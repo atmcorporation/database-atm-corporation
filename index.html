@@ -5,53 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PT HARAPAN UTAMA PRIMA</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #FFC0CB; /* Warna pink */
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        header img {
-            width: 200px;
-        }
-        .login-form, .register-form, .employee-table, .action-buttons {
-            background-color: white;
-            padding: 20px;
-            margin-bottom: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .employee-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .employee-table th, .employee-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        .employee-table th {
-            background-color: #f2f2f2;
-        }
-        .action-buttons button, .filter-form button {
-            background-color: #FFC0CB; /* Warna pink */
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .action-buttons button:hover, .filter-form button:hover {
-            background-color: #e6a3af;
-        }
-        .filter-form input, .filter-form select {
-            padding: 10px;
-            margin: 5px;
-        }
+        /* Your existing CSS goes here */
+        body { font-family: Arial, sans-serif; background-color: #FFC0CB; } 
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; } 
+        header img { width: 200px; } 
+        .login-form, .register-form, .employee-table, .action-buttons { background-color: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); } 
+        .employee-table table { width: 100%; border-collapse: collapse; } 
+        .employee-table th, .employee-table td { border: 1px solid #ddd; padding: 8px; text-align: left; } 
+        .employee-table th { background-color: #f2f2f2; } 
+        .action-buttons button, .filter-form button { background-color: #FFC0CB; border: none; color: white; padding: 10px 20px; margin: 5px; border-radius: 5px; cursor: pointer; } 
+        .action-buttons button:hover, .filter-form button:hover { background-color: #e6a3af; } 
+        .filter-form input, .filter-form select { padding: 10px; margin: 5px; } 
     </style>
 </head>
 <body>
@@ -59,10 +23,9 @@
         <img src="logo.png" alt="Logo PT HARAPAN UTAMA PRIMA">
     </header>
     <div class="container">
-        <!-- Form Login -->
-        <div class="login-form">
+        <div class="login-form" id="loginForm">
             <h2>Login</h2>
-            <form>
+            <form onsubmit="return login(event)">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required><br><br>
                 <label for="password">Password:</label>
@@ -70,10 +33,9 @@
                 <button type="submit">Login</button>
             </form>
         </div>
-        <!-- Form Register -->
-        <div class="register-form">
+        <div class="register-form" id="registerForm">
             <h2>Register User Baru</h2>
-            <form>
+            <form onsubmit="return register(event)">
                 <label for="new-username">Username:</label>
                 <input type="text" id="new-username" name="new-username" required><br><br>
                 <label for="new-password">Password:</label>
@@ -81,8 +43,7 @@
                 <button type="submit">Register</button>
             </form>
         </div>
-        <!-- Tabel Karyawan -->
-        <div class="employee-table">
+        <div class="employee-table" id="employeeTable">
             <h2>Data Karyawan</h2>
             <div class="filter-form">
                 <input type="text" id="filter-name" placeholder="Filter by Name">
@@ -115,14 +76,50 @@
             </table>
         </div>
         <div class="action-buttons">
-            <button>Add Karyawan</button>
-            <button>Import Data Excel</button>
-            <button>Export Data to Excel</button>
+            <button onclick="addEmployee()">Add Karyawan</button>
+            <button onclick="importExcel()">Import Data Excel</button>
+            <button onclick="exportExcel()">Export Data to Excel</button>
         </div>
     </div>
     <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            if (localStorage.getItem("isLoggedIn")) {
+                showEmployeeTable();
+            }
+        });
+
+        function login(event) {
+            event.preventDefault();
+            // Tambahkan logika autentikasi Anda di sini
+            localStorage.setItem("isLoggedIn", true);
+            showEmployeeTable();
+        }
+
+        function register(event) {
+            event.preventDefault();
+            // Tambahkan logika register Anda di sini
+        }
+
+        function showEmployeeTable() {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("employeeTable").style.display = "block";
+        }
+
         function filterData() {
             // Tambahkan logika untuk memfilter data berdasarkan input user
+        }
+
+        function addEmployee() {
+            // Tambahkan logika untuk menambah data karyawan
+        }
+
+        function importExcel() {
+            // Tambahkan logika untuk import data dari Excel
+        }
+
+        function exportExcel() {
+            // Tambahkan logika untuk export data ke Excel
         }
     </script>
 </body>
