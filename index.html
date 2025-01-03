@@ -167,7 +167,7 @@
 
     <script>
         let users = JSON.parse(localStorage.getItem('users')) || [];
-        let employees = [];
+        let employees = JSON.parse(localStorage.getItem('employees')) || [];
 
         // Halaman Register
         function showRegister() {
@@ -236,6 +236,7 @@
                 status: "not yet"
             };
             employees.push(employee);
+            localStorage.setItem('employees', JSON.stringify(employees));
             loadEmployeeData();
         }
 
@@ -247,9 +248,36 @@
                 reader.onload = function(e) {
                     const data = e.target.result;
                     const workbook = XLSX.read(data, { type: 'binary' });
+
+                    // Mengambil sheet pertama
                     const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
-                    employees = jsonData;
+
+                    // Menyusun data dalam format JSON
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    // Menampilkan data untuk pemeriksaan
+                    console.log(jsonData); // Untuk debugging, cek struktur data yang diterima
+
+                    // Mengubah data Excel menjadi format yang sesuai
+                    employees = jsonData.map(row => {
+                        return {
+                            name: row[0] || "Unknown",  // Pastikan urutan sesuai dengan kolom Excel Anda
+                            nik: row[1] || "Unknown",   // Misalnya kolom 1 adalah NIK
+                            position: row[2] || "Unknown", // Kolom 2 adalah Position
+                            serviceManager: row[3] || "Unknown", // Kolom 3 adalah Service Manager
+                            region: row[4] || "Unknown", // Kolom 4 adalah Region
+                            cluster: row[5] || "Unknown", // Kolom 5 adalah Cluster
+                            phone: row[6] || "Unknown",  // Kolom 6 adalah No HP
+                            email: row[7] || "Unknown",  // Kolom 7 adalah Email
+                            ktp: row[8] || "Unknown",    // Kolom 8 adalah No KTP
+                            status: row[9] || "not yet"  // Kolom 9 adalah Status Lisence
+                        };
+                    });
+
+                    // Menyimpan ke localStorage
+                    localStorage.setItem('employees', JSON.stringify(employees));
+
+                    // Memuat ulang data karyawan setelah diimpor
                     loadEmployeeData();
                 };
                 reader.readAsBinaryString(file);
@@ -262,77 +290,4 @@
         function exportData() {
             const ws = XLSX.utils.json_to_sheet(employees);
             const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Employees");
-            XLSX.writeFile(wb, "employee_data.xlsx");
-        }
-
-        // Edit Employee Functionality
-        function editEmployee(index) {
-            const employee = employees[index];
-            const newName = prompt("Edit Nama Karyawan", employee.name);
-            if (newName) {
-                employee.name = newName;
-                loadEmployeeData();
-            }
-        }
-
-        // Delete Employee Functionality
-        function deleteEmployee(index) {
-            if (confirm("Apakah Anda yakin ingin menghapus data ini?")) {
-                employees.splice(index, 1);
-                loadEmployeeData();
-            }
-        }
-
-        // Filter Table Functionality
-        function filterTable() {
-            const filter = document.getElementById("filterName").value.toUpperCase();
-            const rows = document.getElementById("employeeTable").getElementsByTagName("tr");
-
-            for (let i = 1; i < rows.length; i++) {
-                const nameCell = rows[i].getElementsByTagName("td")[0];
-                if (nameCell) {
-                    const name = nameCell.textContent || nameCell.innerText;
-                    if (name.toUpperCase().indexOf(filter) > -1) {
-                        rows[i].style.display = "";
-                    } else {
-                        rows[i].style.display = "none";
-                    }
-                }
-            }
-        }
-
-        // Load Employee Data Functionality
-        function loadEmployeeData() {
-            const tableBody = document.querySelector("#employeeTable tbody");
-            tableBody.innerHTML = "";
-            employees.forEach((employee, index) => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${employee.name}</td>
-                    <td>${employee.nik}</td>
-                    <td>${employee.position}</td>
-                    <td>${employee.serviceManager}</td>
-                    <td>${employee.region}</td>
-                    <td>${employee.cluster}</td>
-                    <td>${employee.phone}</td>
-                    <td>${employee.email}</td>
-                    <td>${employee.ktp}</td>
-                    <td>
-                        <select onchange="employee.status = this.value">
-                            <option value="not yet" ${employee.status === 'not yet' ? 'selected' : ''}>Not Yet</option>
-                            <option value="completed" ${employee.status === 'completed' ? 'selected' : ''}>Completed</option>
-                        </select>
-                    </td>
-                    <td>
-                        <button class="action-btn" onclick="editEmployee(${index})">Edit</button>
-                        <button class="action-btn" onclick="deleteEmployee(${index})">Delete</button>
-                    </td>
-                `;
-                tableBody.appendChild(row);
-            });
-        }
-    </script>
-
-</body>
-</html>
+            XLSX.utils.book_append_sheet(wb
