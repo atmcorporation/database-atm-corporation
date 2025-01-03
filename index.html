@@ -1,205 +1,205 @@
-<?php
-session_start();
-
-// Koneksi ke database
-$host = 'localhost';
-$username = 'root';
-$password = '';
-$dbname = 'pt_harapan_utama_prima';
-
-$conn = new mysqli($host, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die("Koneksi gagal: " . $conn->connect_error);
-}
-
-// Fungsi untuk menangani login
-function login($email, $password) {
-    global $conn;
-    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ? AND password = ?");
-    $stmt->bind_param('ss', $email, $password);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result->num_rows > 0) {
-        $_SESSION['user'] = $email;
-        return true;
-    }
-    return false;
-}
-
-// Fungsi untuk menangani registrasi
-function register($email, $password) {
-    global $conn;
-    $stmt = $conn->prepare("INSERT INTO users (email, password) VALUES (?, ?)");
-    $stmt->bind_param('ss', $email, $password);
-    return $stmt->execute();
-}
-
-// Fungsi untuk menambah karyawan
-function addEmployee($data) {
-    global $conn;
-    $stmt = $conn->prepare("INSERT INTO employees (name, nik, position, service_manager, region, cluster, phone, email, ktp, license_status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('ssssssssss', $data['name'], $data['nik'], $data['position'], $data['service_manager'], $data['region'], $data['cluster'], $data['phone'], $data['email'], $data['ktp'], $data['license_status']);
-    return $stmt->execute();
-}
-
-// Fungsi untuk mengedit karyawan
-function editEmployee($id, $data) {
-    global $conn;
-    $stmt = $conn->prepare("UPDATE employees SET name = ?, nik = ?, position = ?, service_manager = ?, region = ?, cluster = ?, phone = ?, email = ?, ktp = ?, license_status = ? WHERE id = ?");
-    $stmt->bind_param('ssssssssssi', $data['name'], $data['nik'], $data['position'], $data['service_manager'], $data['region'], $data['cluster'], $data['phone'], $data['email'], $data['ktp'], $data['license_status'], $id);
-    return $stmt->execute();
-}
-
-// Fungsi untuk menghapus karyawan
-function deleteEmployee($id) {
-    global $conn;
-    $stmt = $conn->prepare("DELETE FROM employees WHERE id = ?");
-    $stmt->bind_param('i', $id);
-    return $stmt->execute();
-}
-
-// Fungsi untuk mengimpor data karyawan dari file Excel
-function importEmployees($file) {
-    // Implementasi impor data dari file Excel
-    // ...
-}
-
-// Fungsi untuk mengekspor data karyawan ke file Excel
-function exportEmployees() {
-    // Implementasi ekspor data ke file Excel
-    // ...
-}
-
-// Menangani aksi login
-if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    if (login($email, $password)) {
-        header('Location: index.php');
-        exit();
-    } else {
-        $error = 'Email atau kata sandi salah!';
-    }
-}
-
-// Menangani aksi registrasi
-if (isset($_POST['register'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-    if (register($email, $password)) {
-        header('Location: index.php');
-        exit();
-    } else {
-        $error = 'Registrasi gagal!';
-    }
-}
-
-// Menangani aksi tambah karyawan
-if (isset($_POST['add_employee'])) {
-    $data = $_POST;
-    if (addEmployee($data)) {
-        header('Location: index.php');
-        exit();
-    } else {
-        $error = 'Gagal menambah karyawan!';
-    }
-}
-
-// Menangani aksi edit karyawan
-if (isset($_POST['edit_employee'])) {
-    $id = $_POST['id'];
-    $data = $_POST;
-    if (editEmployee($id, $data)) {
-        header('Location: index.php');
-        exit();
-    } else {
-        $error = 'Gagal mengedit karyawan!';
-    }
-}
-
-// Menangani aksi hapus karyawan
-if (isset($_GET['delete'])) {
-    $id = $_GET['delete'];
-    if (deleteEmployee($id)) {
-        header('Location: index.php');
-        exit();
-    } else {
-        $error = 'Gagal menghapus karyawan!';
-    }
-}
-
-// Menangani aksi impor data
-if (isset($_POST['import'])) {
-    $file = $_FILES['file'];
-    if (importEmployees($file)) {
-        header('Location: index.php');
-        exit();
-    } else {
-        $error = 'Gagal mengimpor data!';
-    }
-}
-
-// Menangani aksi ekspor data
-if (isset($_POST['export'])) {
-    exportEmployees();
-    exit();
-}
-
-// Mendapatkan data karyawan
-$employees = [];
-$result = $conn->query("SELECT * FROM employees");
-while ($row = $result->fetch_assoc()) {
-    $employees[] = $row;
-}
-?>
-
 <!DOCTYPE html>
-<html lang="id-ID">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PT HARAPAN UTAMA PRIMA - Manajemen Karyawan</title>
+    <title>PT HARAPAN UTAMA PRIMA</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
+            background-color: #f7e5f2;
             margin: 0;
             padding: 0;
         }
-        header {
-            background-color: #ff66b2;
-            padding: 20px;
-            text-align: center;
+        .header {
+            background-color: #ff4f91;
             color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .logo {
+            width: 100px;
+            height: auto;
         }
         .container {
-            width: 80%;
-            margin: 20px auto;
-            background-color: white;
             padding: 20px;
-            border-radius: 8px;
+        }
+        .login-form, .register-form, .table-container {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        input, select {
+            padding: 10px;
+            margin: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #ff4f91;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
         }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
         th, td {
-            padding: 8px;
+            padding: 12px;
             text-align: left;
+            border-bottom: 1px solid #ddd;
         }
         th {
-            background-color: #ff66b2;
-            color: white;
+            background-color: #f1f1f1;
         }
-        .btn {
-            background-color: #ff66b2;
-            color: white;
-            padding: 8px 12px;
-            border: none;
-           
-::contentReference[oaicite:0]{index=0}
- 
+        .action-btn {
+            margin-right: 10px;
+        }
+        .filter {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .filter input {
+            width: 200px;
+        }
+        .logout-btn {
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <img src="logo.png" alt="PT HARAPAN UTAMA PRIMA" class="logo">
+        <h1>PT HARAPAN UTAMA PRIMA</h1>
+    </div>
+
+    <!-- Login Form -->
+    <div class="login-form">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+
+    <!-- Register Form -->
+    <div class="register-form">
+        <h2>Register User Baru</h2>
+        <form id="registerForm">
+            <input type="text" id="newUsername" placeholder="Username" required>
+            <input type="password" id="newPassword" placeholder="Password" required>
+            <button type="submit">Register</button>
+        </form>
+    </div>
+
+    <!-- After Login -->
+    <div id="afterLogin" style="display:none;">
+        <div class="filter">
+            <input type="text" id="filterName" placeholder="Cari Nama Karyawan" onkeyup="filterTable()">
+            <button onclick="showAddEmployeeForm()">Tambah Karyawan</button>
+            <button onclick="exportExcel()">Export Excel</button>
+        </div>
+
+        <!-- Employee Data Table -->
+        <div class="table-container">
+            <table id="employeeTable">
+                <thead>
+                    <tr>
+                        <th>Nama Karyawan</th>
+                        <th>NIK</th>
+                        <th>Position</th>
+                        <th>Service Manager</th>
+                        <th>Region</th>
+                        <th>Cluster</th>
+                        <th>No HP</th>
+                        <th>Email</th>
+                        <th>No KTP</th>
+                        <th>Status Lisence</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic employee data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Logout Button -->
+        <div class="logout-btn">
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        let loggedIn = false;
+
+        // Login Function
+        document.getElementById("loginForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === "admin" && password === "admin") {
+                loggedIn = true;
+                document.querySelector(".login-form").style.display = "none";
+                document.querySelector(".register-form").style.display = "none";
+                document.getElementById("afterLogin").style.display = "block";
+            } else {
+                alert("Username atau Password salah!");
+            }
+        });
+
+        // Register Function
+        document.getElementById("registerForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            alert("User baru terdaftar!");
+        });
+
+        // Logout Function
+        function logout() {
+            loggedIn = false;
+            document.querySelector(".login-form").style.display = "block";
+            document.querySelector(".register-form").style.display = "block";
+            document.getElementById("afterLogin").style.display = "none";
+        }
+
+        // Add Employee Function (Temporary form for adding employee)
+        function showAddEmployeeForm() {
+            alert("Fitur tambah karyawan belum tersedia.");
+        }
+
+        // Filter Table Function
+        function filterTable() {
+            const filter = document.getElementById("filterName").value.toUpperCase();
+            const rows = document.getElementById("employeeTable").getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                const nameCell = rows[i].getElementsByTagName("td")[0];
+                if (nameCell) {
+                    const name = nameCell.textContent || nameCell.innerText;
+                    if (name.toUpperCase().indexOf(filter) > -1) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Export Excel Function
+        function exportExcel() {
+            alert("Fitur export ke Excel belum tersedia.");
+        }
+    </script>
+</body>
+</html>
