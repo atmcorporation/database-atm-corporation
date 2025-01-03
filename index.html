@@ -166,6 +166,7 @@
     </div>
 
     <script>
+        // Simpan pengguna dan karyawan di localStorage
         let users = JSON.parse(localStorage.getItem('users')) || [];
         let employees = JSON.parse(localStorage.getItem('employees')) || [];
 
@@ -190,6 +191,7 @@
             // Check if user exists
             const user = users.find(user => user.username === username && user.password === password);
             if (user) {
+                localStorage.setItem('currentUser', JSON.stringify(user)); // Save current user to localStorage
                 document.getElementById("loginPage").style.display = "none";
                 document.getElementById("registerPage").style.display = "none";
                 document.getElementById("afterLogin").style.display = "block";
@@ -217,6 +219,7 @@
 
         // Logout Functionality
         function logout() {
+            localStorage.removeItem('currentUser'); // Remove current user data from localStorage
             document.getElementById("loginPage").style.display = "block";
             document.getElementById("afterLogin").style.display = "none";
         }
@@ -240,54 +243,69 @@
             loadEmployeeData();
         }
 
-        // Import Data Functionality (Excel)
-        function importData(event) {
-            const file = event.target.files[0];
-            if (file && file.name.endsWith(".xlsx")) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const data = e.target.result;
-                    const workbook = XLSX.read(data, { type: 'binary' });
+        // Load Employee Data Functionality
+        function loadEmployeeData() {
+            const table = document.getElementById("employeeTable").getElementsByTagName('tbody')[0];
+            table.innerHTML = ''; // Clear previous data
 
-                    // Mengambil sheet pertama
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-
-                    // Menyusun data dalam format JSON
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-                    // Menampilkan data untuk pemeriksaan
-                    console.log(jsonData); // Untuk debugging, cek struktur data yang diterima
-
-                    // Mengubah data Excel menjadi format yang sesuai
-                    employees = jsonData.map(row => {
-                        return {
-                            name: row[0] || "Unknown",  // Pastikan urutan sesuai dengan kolom Excel Anda
-                            nik: row[1] || "Unknown",   // Misalnya kolom 1 adalah NIK
-                            position: row[2] || "Unknown", // Kolom 2 adalah Position
-                            serviceManager: row[3] || "Unknown", // Kolom 3 adalah Service Manager
-                            region: row[4] || "Unknown", // Kolom 4 adalah Region
-                            cluster: row[5] || "Unknown", // Kolom 5 adalah Cluster
-                            phone: row[6] || "Unknown",  // Kolom 6 adalah No HP
-                            email: row[7] || "Unknown",  // Kolom 7 adalah Email
-                            ktp: row[8] || "Unknown",    // Kolom 8 adalah No KTP
-                            status: row[9] || "not yet"  // Kolom 9 adalah Status Lisence
-                        };
-                    });
-
-                    // Menyimpan ke localStorage
-                    localStorage.setItem('employees', JSON.stringify(employees));
-
-                    // Memuat ulang data karyawan setelah diimpor
-                    loadEmployeeData();
-                };
-                reader.readAsBinaryString(file);
-            } else {
-                alert("Format file harus XLSX!");
-            }
+            employees.forEach((emp, index) => {
+                let row = table.insertRow();
+                row.innerHTML = `
+                    <td contenteditable="true">${emp.name}</td>
+                    <td contenteditable="true">${emp.nik}</td>
+                    <td contenteditable="true">${emp.position}</td>
+                    <td contenteditable="true">${emp.serviceManager}</td>
+                    <td contenteditable="true">${emp.region}</td>
+                    <td contenteditable="true">${emp.cluster}</td>
+                    <td contenteditable="true">${emp.phone}</td>
+                    <td contenteditable="true">${emp.email}</td>
+                    <td contenteditable="true">${emp.ktp}</td>
+                    <td contenteditable="true">${emp.status}</td>
+                    <td>
+                        <button class="action-btn" onclick="editEmployee(${index})">Save</button>
+                        <button class="action-btn" onclick="deleteEmployee(${index})">Delete</button>
+                    </td>
+                `;
+            });
         }
 
-        // Export Data Functionality (Excel)
-        function exportData() {
-            const ws = XLSX.utils.json_to_sheet(employees);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb
+        // Edit Employee Data
+        function editEmployee(index) {
+            const row = document.getElementById("employeeTable").rows[index + 1];
+            employees[index] = {
+                name: row.cells[0].innerText,
+                nik: row.cells[1].innerText,
+                position: row.cells[2].innerText,
+                serviceManager: row.cells[3].innerText,
+                region: row.cells[4].innerText,
+                cluster: row.cells[5].innerText,
+                phone: row.cells[6].innerText,
+                email: row.cells[7].innerText,
+                ktp: row.cells[8].innerText,
+                status: row.cells[9].innerText
+            };
+            localStorage.setItem('employees', JSON.stringify(employees));
+        }
+
+        // Delete Employee
+        function deleteEmployee(index) {
+            employees.splice(index, 1);
+            localStorage.setItem('employees', JSON.stringify(employees));
+            loadEmployeeData();
+        }
+
+        // Filter Table Based on Input
+        function filterTable() {
+            const filter = document.getElementById('filterName').value.toLowerCase();
+            const rows = document.getElementById("employeeTable").rows;
+
+            for (let i = 1; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const name = cells[0].innerText.toLowerCase();
+                rows[i].style.display = name.includes(filter) ? '' : 'none';
+            }
+        }
+    </script>
+
+</body>
+</html>
