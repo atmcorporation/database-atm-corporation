@@ -322,6 +322,52 @@ document.getElementById('importFile').addEventListener('change', function(e) {
                 actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
             });
 
+            // Tambahkan event listener pada setiap sel yang dapat diedit
+function addEditableListeners() {
+    const cells = document.querySelectorAll('#employeeTable tbody td[contenteditable="true"]');
+    cells.forEach(cell => {
+        cell.addEventListener('blur', function() {
+            saveEmployeeData(); // Simpan data setelah selesai mengedit
+        });
+    });
+}
+
+// Perbarui fungsi loadEmployeeData untuk menambahkan event listener pada sel yang dapat diedit
+function loadEmployeeData() {
+    const employeeData = JSON.parse(localStorage.getItem('employeeData')) || [];
+    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    employeeData.forEach((employee) => {
+        const row = table.insertRow();
+        const checkboxCell = row.insertCell();
+        checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+        Object.values(employee).forEach((value) => {
+            const cell = row.insertCell();
+            cell.textContent = value;
+            cell.contentEditable = true; // Jadikan sel dapat diedit
+        });
+
+        const actionsCell = row.insertCell();
+        actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+    });
+
+    addEditableListeners(); // Tambahkan event listener pada sel yang dapat diedit
+}
+
+// Panggil fungsi untuk menambahkan event listener setelah memuat data karyawan
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        loadEmployeeData(); // Memuat data karyawan jika sudah login
+        addCheckboxes(); // Tambahkan checkboxes
+        addDeleteButton(); // Tambahkan tombol delete
+    } else {
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('mainPage').style.display = 'none';
+    }
+};
+
             // Simpan data yang diimpor ke localStorage
             localStorage.setItem('employeeData', JSON.stringify(jsonData)); // Menyimpan data karyawan setelah impor
             alert('Data imported successfully!');
