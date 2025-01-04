@@ -312,7 +312,22 @@
                     const sheet = workbook.Sheets[sheetName];
                     const importedData = XLSX.utils.sheet_to_json(sheet);
 
-                    employees = importedData; // Gantikan data karyawan dengan data yang diimpor
+                    // Perbaiki penanganan data impor agar tidak undefined
+                    if (importedData.length > 0) {
+                        employees = importedData.map(item => ({
+                            nama: item.Nama || '',
+                            nik: item.NIK || '',
+                            position: item.Posisi || '',
+                            serviceManager: item['Service Manager'] || '',
+                            region: item.Region || '',
+                            cluster: item.Cluster || '',
+                            noHp: item['No HP'] || '',
+                            email: item.Email || '',
+                            noKtp: item['No KTP'] || '',
+                            statusLisensi: item['Status Lisensi'] || 'Not Yet',
+                        }));
+                    }
+
                     localStorage.setItem("employees", JSON.stringify(employees));
                     displayEmployees();
                 };
