@@ -408,9 +408,6 @@ window.onload = function() {
                         const actionsCell = row.insertCell();
                         actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
                     });
-
-                    saveEmployeeData(); // Simpan data setelah impor
-                    alert('Data imported successfully!');
                 };
                 reader.readAsBinaryString(file);
             }
