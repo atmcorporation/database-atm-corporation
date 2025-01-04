@@ -137,7 +137,7 @@
     </div>
 
     <footer>
-        <img src="https://www.harapanutama.co.id" alt="PT HARAPAN UTAMA Prima Logo">
+        <img src="https://harapanutama.co.id/assets/images/logo.png" alt="PT HARAPAN UTAMA Prima Logo">
         <p>PT HARAPAN UTAMA Prima</p>
     </footer>
 
@@ -234,4 +234,10 @@
         document.getElementById('logoutButton').addEventListener('click', function() {
             localStorage.removeItem('currentUser'); // Hapus status login
             document.getElementById('mainPage').style.display = 'none';
-            document.get
+            document.getElementById('loginPage').style.display = 'block';
+        });
+
+        // Add employee
+        document.getElementById('addEmployeeButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const row = table.insertRow();
