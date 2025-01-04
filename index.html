@@ -323,6 +323,47 @@ document.getElementById('importFile').addEventListener('change', function(e) {
         reader.readAsBinaryString(file);
     }
 });
+
+        // Tambahkan kolom checkbox di tabel karyawan
+document.addEventListener('DOMContentLoaded', function() {
+    const table = document.getElementById('employeeTable').getElementsByTagName('thead')[0];
+    const headerRow = table.rows[0];
+    const checkboxHeader = document.createElement('th');
+    checkboxHeader.innerHTML = '<input type="checkbox" id="selectAll">';
+    headerRow.insertBefore(checkboxHeader, headerRow.firstChild);
+
+    const tbody = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    Array.from(tbody.rows).forEach(function(row) {
+        const checkboxCell = document.createElement('td');
+        checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+        row.insertBefore(checkboxCell, row.firstChild);
+    });
+
+    // Event listener untuk checkbox "Select All"
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.selectRow');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+    });
+});
+
+// Tambahkan tombol untuk menghapus data yang dipilih
+const deleteSelectedButton = document.createElement('button');
+deleteSelectedButton.textContent = 'Delete Selected';
+deleteSelectedButton.id = 'deleteSelectedButton';
+document.getElementById('mainPage').insertBefore(deleteSelectedButton, document.getElementById('employeeTable'));
+
+// Fungsi untuk menghapus data yang dipilih
+document.getElementById('deleteSelectedButton').addEventListener('click', function() {
+    const checkboxes = document.querySelectorAll('.selectRow:checked');
+    const tbody = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+
+    checkboxes.forEach(checkbox => {
+        const row = checkbox.closest('tr');
+        tbody.removeChild(row);
+    });
+
+    saveEmployeeData(); // Simpan data setelah menghapus karyawan
+});
         
         // Handle file selection
         document.getElementById('importFile').addEventListener('change', function(e) {
