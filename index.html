@@ -324,9 +324,8 @@ document.getElementById('importFile').addEventListener('change', function(e) {
         reader.readAsBinaryString(file);
     }
 });
-
-        // Tambahkan kolom checkbox di tabel karyawan
-document.addEventListener('DOMContentLoaded', function() {
+// Tambahkan kolom checkbox di tabel karyawan
+function addCheckboxes() {
     const table = document.getElementById('employeeTable').getElementsByTagName('thead')[0];
     const headerRow = table.rows[0];
     const checkboxHeader = document.createElement('th');
@@ -345,27 +344,44 @@ document.addEventListener('DOMContentLoaded', function() {
         const checkboxes = document.querySelectorAll('.selectRow');
         checkboxes.forEach(checkbox => checkbox.checked = this.checked);
     });
-});
+}
 
 // Tambahkan tombol untuk menghapus data yang dipilih
-const deleteSelectedButton = document.createElement('button');
-deleteSelectedButton.textContent = 'Delete Selected';
-deleteSelectedButton.id = 'deleteSelectedButton';
-document.getElementById('mainPage').insertBefore(deleteSelectedButton, document.getElementById('employeeTable'));
+function addDeleteButton() {
+    const deleteSelectedButton = document.createElement('button');
+    deleteSelectedButton.textContent = 'Delete Selected';
+    deleteSelectedButton.id = 'deleteSelectedButton';
+    document.getElementById('mainPage').insertBefore(deleteSelectedButton, document.getElementById('employeeTable'));
 
-// Fungsi untuk menghapus data yang dipilih
-document.getElementById('deleteSelectedButton').addEventListener('click', function() {
-    const checkboxes = document.querySelectorAll('.selectRow:checked');
-    const tbody = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    // Fungsi untuk menghapus data yang dipilih
+    deleteSelectedButton.addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.selectRow:checked');
+        const tbody = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
 
-    checkboxes.forEach(checkbox => {
-        const row = checkbox.closest('tr');
-        tbody.removeChild(row);
+        checkboxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            tbody.removeChild(row);
+        });
+
+        saveEmployeeData(); // Simpan data setelah menghapus karyawan
     });
+}
 
-    saveEmployeeData(); // Simpan data setelah menghapus karyawan
-});
-     
+// Panggil fungsi untuk menambahkan checkboxes dan tombol delete setelah memuat data karyawan
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        loadEmployeeData(); // Memuat data karyawan jika sudah login
+        addCheckboxes(); // Tambahkan checkboxes
+        addDeleteButton(); // Tambahkan tombol delete
+    } else {
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('mainPage').style.display = 'none';
+    }
+};
+        
         // Handle file selection
         document.getElementById('importFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
