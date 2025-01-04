@@ -17,7 +17,7 @@
             overflow: hidden;
         }
         header {
-            background: #f44336;
+            background: #d81b60; /* Pink sedikit tua */
             color: #fff;
             padding: 10px 0;
             text-align: center;
@@ -42,7 +42,7 @@
             border-radius: 5px;
         }
         button {
-            background: #f44336;
+            background: #d81b60; /* Pink sedikit tua */
             color: #fff;
             padding: 10px 15px;
             border: none;
@@ -50,7 +50,7 @@
             cursor: pointer;
         }
         button:hover {
-            background: #d32f2f;
+            background: #c2185b; /* Pink sedikit lebih tua */
         }
         table {
             width: 100%;
@@ -72,12 +72,25 @@
             border-radius: 5px;
             font-size: 16px;
         }
+        footer {
+            background: #d81b60; /* Pink sedikit tua */
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+        footer img {
+            max-height: 30px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 <body>
- <header>
-    <img src="https://storage.googleapis.com/ekrutassets/blogs/images/000/005/202/original/Smartfren-Logo.wine.png" alt="Smartfren Logo">
-</header>
+    <header>
+        <img src="https://storage.googleapis.com/ekrutassets/blogs/images/000/005/202/original/Smartfren-Logo.wine.png" alt="Smartfren Logo">
+    </header>
 
     <div id="loginPage" class="container">
         <form id="loginForm">
@@ -122,6 +135,11 @@
             </tbody>
         </table>
     </div>
+
+    <footer>
+        <img src="https://www.harapanutama.co.id" alt="PT HARAPAN UTAMA Prima Logo">
+        <p>PT HARAPAN UTAMA Prima</p>
+    </footer>
 
     <script>
         // Simpan pengguna terdaftar
@@ -216,109 +234,4 @@
         document.getElementById('logoutButton').addEventListener('click', function() {
             localStorage.removeItem('currentUser'); // Hapus status login
             document.getElementById('mainPage').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'block';
-        });
-
-        // Add employee
-        document.getElementById('addEmployeeButton').addEventListener('click', function() {
-            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
-            const row = table.insertRow();
-
-            for (let i = 0; i < 10; i++) {
-                const cell = row.insertCell();
-                if (i === 8) {
-                    cell.textContent = new Date().toISOString().split('T')[0]; // Default join date
-                } else if (i === 9) {
-                    cell.innerHTML = `<select><option value="Not Yet">Not Yet</option><option value="Completed">Completed</option></select>`;
-                } else {
-                    cell.contentEditable = true;
-                }
-            }
-
-            // Menambahkan kolom untuk posisi
-            const positionCell = row.insertCell();
-            positionCell.contentEditable = true;
-
-            const actionsCell = row.insertCell();
-            actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
-
-            saveEmployeeData(); // Simpan data setelah menambahkan karyawan
-        });
-
-        // Edit row
-        function editRow(button) {
-            const row = button.parentElement.parentElement;
-            row.contentEditable = true;
-            alert('Now editing. Click outside the cell to save.');
-        }
-
-        // Delete row
-        function deleteRow(button) {
-            const row = button.parentElement.parentElement;
-            row.remove();
-            saveEmployeeData(); // Simpan data setelah menghapus baris
-        }
-
-        // Export to Excel
-        document.getElementById('exportButton').addEventListener('click', function() {
-            const table = document.getElementById('employeeTable');
-            const workbook = XLSX.utils.table_to_book(table);
-            XLSX.writeFile(workbook, 'Smartfren_Employee_Data.xlsx');
-        });
-
-        // Import Data button
-        document.getElementById('importButton').addEventListener('click', function() {
-            document.getElementById('importFile').click(); // Trigger file input click
-        });
-
-        // Handle file selection
-        document.getElementById('importFile').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const data = event.target.result;
-                    const workbook = XLSX.read(data, { type: 'binary' });
-                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(sheet);
-                    
-                    // Loop untuk memasukkan data ke dalam tabel
-                    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
-                    jsonData.forEach((employee) => {
-                        const row = table.insertRow();
-                        
-                        // Loop untuk mengisi setiap kolom berdasarkan data
-                        Object.values(employee).forEach((value) => {
-                            const cell = row.insertCell();
-                            cell.textContent = value;
-                        });
-                        
-                        // Tambahkan kolom untuk actions (edit & delete)
-                        const actionsCell = row.insertCell();
-                        actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
-                    });
-
-                    saveEmployeeData(); // Simpan data setelah impor
-                    alert('Data imported successfully!');
-                };
-                reader.readAsBinaryString(file);
-            }
-        });
-
-        // Filter functionality
-        document.getElementById('filterInput').addEventListener('keyup', function() {
-            const filter = this.value.toLowerCase();
-            const rows = document.getElementById('employeeTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-            
-            Array.from(rows).forEach(function(row) {
-                let match = false;
-                const cells = row.getElementsByTagName('td');
-                Array.from(cells).forEach(function(cell) {
-                    if (cell.textContent.toLowerCase().includes(filter)) {
-                        match = true;
-                    }
-                });
-                row.style.display = match ? '' : 'none';
-            });
-        });
-    </script>
+            document.get
