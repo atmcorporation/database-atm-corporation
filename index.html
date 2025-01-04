@@ -290,6 +290,41 @@
         });
 
         // Handle file selection
+document.getElementById('importFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const data = event.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet);
+            
+            // Loop untuk memasukkan data ke dalam tabel
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            jsonData.forEach((employee) => {
+                const row = table.insertRow();
+                
+                // Loop untuk mengisi setiap kolom berdasarkan data
+                Object.values(employee).forEach((value) => {
+                    const cell = row.insertCell();
+                    cell.textContent = value;
+                });
+                
+                // Tambahkan kolom untuk actions (edit & delete)
+                const actionsCell = row.insertCell();
+                actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
+            });
+
+            // Simpan data yang diimpor ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(jsonData)); // Menyimpan data karyawan setelah impor
+            alert('Data imported successfully!');
+        };
+        reader.readAsBinaryString(file);
+    }
+});
+        
+        // Handle file selection
         document.getElementById('importFile').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
