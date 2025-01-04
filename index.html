@@ -52,6 +52,21 @@
             display: none;
             padding: 20px;
         }
+        .actions {
+            margin-bottom: 20px;
+        }
+        .actions button, .actions input {
+            margin-right: 10px;
+            padding: 10px;
+            background: #a80055;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .actions button:hover {
+            background: #920048;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
@@ -107,7 +122,12 @@
     <div id="dashboard">
         <h2>Dashboard</h2>
         <button onclick="logout()" class="action">Logout</button>
-        <button onclick="addEmployee()" class="action">Tambah Karyawan</button>
+        <div class="actions">
+            <input type="text" id="filterInput" placeholder="Cari Karyawan..." oninput="filterEmployees()">
+            <button onclick="addEmployee()">Tambah Karyawan</button>
+            <button onclick="importExcel()">Import Excel</button>
+            <button onclick="exportExcel()">Export Excel</button>
+        </div>
         <table id="employeeTable">
             <thead>
                 <tr>
@@ -276,6 +296,49 @@
                 localStorage.setItem("employees", JSON.stringify(employees));
                 displayEmployees();
             }
+        }
+
+        function filterEmployees() {
+            const filter = document.getElementById("filterInput").value.toLowerCase();
+            const rows = document.querySelectorAll("#employeeTable tbody tr");
+
+            rows.forEach((row) => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(filter) ? "" : "none";
+            });
+        }
+
+        function exportExcel() {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.json_to_sheet(employees);
+            XLSX.utils.book_append_sheet(wb, ws, "DataKaryawan");
+            XLSX.writeFile(wb, "DataKaryawan.xlsx");
+        }
+
+        function importExcel() {
+            const input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".xlsx, .xls";
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: "array" });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const importedData = XLSX.utils.sheet_to_json(sheet);
+
+                    employees = [...employees, ...importedData];
+                    localStorage.setItem("employees", JSON.stringify(employees));
+                    displayEmployees();
+                };
+
+                reader.readAsArrayBuffer(file);
+            };
+
+            input.click();
         }
     </script>
 </body>
