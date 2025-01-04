@@ -81,7 +81,13 @@
             background-color: #a80055;
             color: white;
         }
-        button.action {
+        .save-btn {
+            background-color: #4CAF50;
+        }
+        .delete-btn {
+            background-color: #f44336;
+        }
+        .action-btn {
             background-color: #a80055;
             color: white;
             border: none;
@@ -89,7 +95,7 @@
             padding: 5px 10px;
             cursor: pointer;
         }
-        button.action:hover {
+        .action-btn:hover {
             background-color: #920048;
         }
     </style>
@@ -121,7 +127,7 @@
     <!-- Dashboard -->
     <div id="dashboard">
         <h2>Dashboard</h2>
-        <button onclick="logout()" class="action">Logout</button>
+        <button onclick="logout()" class="action-btn">Logout</button>
         <div class="actions">
             <input type="text" id="filterInput" placeholder="Cari Karyawan..." oninput="filterEmployees()">
             <button onclick="addEmployee()">Tambah Karyawan</button>
@@ -226,20 +232,20 @@
 
             employees.forEach((employee, index) => {
                 const row = `
-                    <tr>
-                        <td>${employee.nama}</td>
-                        <td>${employee.nik}</td>
-                        <td>${employee.position}</td>
-                        <td>${employee.serviceManager}</td>
-                        <td>${employee.region}</td>
-                        <td>${employee.cluster}</td>
-                        <td>${employee.noHp}</td>
-                        <td>${employee.email}</td>
-                        <td>${employee.noKtp}</td>
-                        <td>${employee.statusLisensi}</td>
+                    <tr id="row-${index}">
+                        <td contenteditable="true" id="nama-${index}">${employee.nama}</td>
+                        <td contenteditable="true" id="nik-${index}">${employee.nik}</td>
+                        <td contenteditable="true" id="position-${index}">${employee.position}</td>
+                        <td contenteditable="true" id="serviceManager-${index}">${employee.serviceManager}</td>
+                        <td contenteditable="true" id="region-${index}">${employee.region}</td>
+                        <td contenteditable="true" id="cluster-${index}">${employee.cluster}</td>
+                        <td contenteditable="true" id="noHp-${index}">${employee.noHp}</td>
+                        <td contenteditable="true" id="email-${index}">${employee.email}</td>
+                        <td contenteditable="true" id="noKtp-${index}">${employee.noKtp}</td>
+                        <td contenteditable="true" id="statusLisensi-${index}">${employee.statusLisensi}</td>
                         <td>
-                            <button class="action" onclick="editEmployee(${index})">Edit</button>
-                            <button class="action" onclick="deleteEmployee(${index})">Hapus</button>
+                            <button class="save-btn" onclick="saveEmployee(${index})">Save</button>
+                            <button class="delete-btn" onclick="deleteEmployee(${index})">Delete</button>
                         </td>
                     </tr>
                 `;
@@ -247,45 +253,21 @@
             });
         }
 
-        function addEmployee() {
-            const nama = prompt("Nama:");
-            const nik = prompt("NIK:");
-            const position = prompt("Posisi:");
-            const serviceManager = prompt("Service Manager:");
-            const region = prompt("Region:");
-            const cluster = prompt("Cluster:");
-            const noHp = prompt("No HP:");
-            const email = prompt("Email:");
-            const noKtp = prompt("No KTP:");
-            const statusLisensi = prompt("Status Lisensi (Not Yet/Completed):");
+        function saveEmployee(index) {
+            const updatedEmployee = {
+                nama: document.getElementById(`nama-${index}`).innerText,
+                nik: document.getElementById(`nik-${index}`).innerText,
+                position: document.getElementById(`position-${index}`).innerText,
+                serviceManager: document.getElementById(`serviceManager-${index}`).innerText,
+                region: document.getElementById(`region-${index}`).innerText,
+                cluster: document.getElementById(`cluster-${index}`).innerText,
+                noHp: document.getElementById(`noHp-${index}`).innerText,
+                email: document.getElementById(`email-${index}`).innerText,
+                noKtp: document.getElementById(`noKtp-${index}`).innerText,
+                statusLisensi: document.getElementById(`statusLisensi-${index}`).innerText,
+            };
 
-            if (!nama || !nik) {
-                alert("Nama dan NIK wajib diisi!");
-                return;
-            }
-
-            employees.push({
-                nama, nik, position, serviceManager, region, cluster, noHp, email, noKtp, statusLisensi,
-            });
-
-            localStorage.setItem("employees", JSON.stringify(employees));
-            displayEmployees();
-        }
-
-        function editEmployee(index) {
-            const employee = employees[index];
-            const nama = prompt("Nama:", employee.nama);
-            const nik = prompt("NIK:", employee.nik);
-            const position = prompt("Posisi:", employee.position);
-            const serviceManager = prompt("Service Manager:", employee.serviceManager);
-            const region = prompt("Region:", employee.region);
-            const cluster = prompt("Cluster:", employee.cluster);
-            const noHp = prompt("No HP:", employee.noHp);
-            const email = prompt("Email:", employee.email);
-            const noKtp = prompt("No KTP:", employee.noKtp);
-            const statusLisensi = prompt("Status Lisensi (Not Yet/Completed):", employee.statusLisensi);
-
-            employees[index] = { nama, nik, position, serviceManager, region, cluster, noHp, email, noKtp, statusLisensi };
+            employees[index] = updatedEmployee;
             localStorage.setItem("employees", JSON.stringify(employees));
             displayEmployees();
         }
@@ -330,7 +312,7 @@
                     const sheet = workbook.Sheets[sheetName];
                     const importedData = XLSX.utils.sheet_to_json(sheet);
 
-                    employees = [...employees, ...importedData];
+                    employees = importedData; // Gantikan data karyawan dengan data yang diimpor
                     localStorage.setItem("employees", JSON.stringify(employees));
                     displayEmployees();
                 };
