@@ -84,6 +84,17 @@
         .delete-btn {
             background-color: #f44336;
         }
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
         .action-btn {
             background-color: #a80055;
             color: white;
@@ -94,6 +105,24 @@
         }
         .action-btn:hover {
             background-color: #920048;
+        }
+        .edit-mode input {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .edit-mode button {
+            padding: 5px 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .edit-mode button:hover {
+            background-color: #45a049;
         }
     </style>
 </head>
@@ -230,17 +259,18 @@
             employees.forEach((employee, index) => {
                 const row = `
                     <tr id="row-${index}">
-                        <td contenteditable="true" id="nama-${index}" onblur="autosave(${index})">${employee.nama}</td>
-                        <td contenteditable="true" id="nik-${index}" onblur="autosave(${index})">${employee.nik}</td>
-                        <td contenteditable="true" id="position-${index}" onblur="autosave(${index})">${employee.position}</td>
-                        <td contenteditable="true" id="serviceManager-${index}" onblur="autosave(${index})">${employee.serviceManager}</td>
-                        <td contenteditable="true" id="region-${index}" onblur="autosave(${index})">${employee.region}</td>
-                        <td contenteditable="true" id="cluster-${index}" onblur="autosave(${index})">${employee.cluster}</td>
-                        <td contenteditable="true" id="noHp-${index}" onblur="autosave(${index})">${employee.noHp}</td>
-                        <td contenteditable="true" id="email-${index}" onblur="autosave(${index})">${employee.email}</td>
-                        <td contenteditable="true" id="noKtp-${index}" onblur="autosave(${index})">${employee.noKtp}</td>
-                        <td contenteditable="true" id="statusLisensi-${index}" onblur="autosave(${index})">${employee.statusLisensi}</td>
+                        <td class="editable" id="nama-${index}">${employee.nama}</td>
+                        <td class="editable" id="nik-${index}">${employee.nik}</td>
+                        <td class="editable" id="position-${index}">${employee.position}</td>
+                        <td class="editable" id="serviceManager-${index}">${employee.serviceManager}</td>
+                        <td class="editable" id="region-${index}">${employee.region}</td>
+                        <td class="editable" id="cluster-${index}">${employee.cluster}</td>
+                        <td class="editable" id="noHp-${index}">${employee.noHp}</td>
+                        <td class="editable" id="email-${index}">${employee.email}</td>
+                        <td class="editable" id="noKtp-${index}">${employee.noKtp}</td>
+                        <td class="editable" id="statusLisensi-${index}">${employee.statusLisensi}</td>
                         <td>
+                            <button class="edit-btn" onclick="editEmployee(${index})">Edit</button>
                             <button class="delete-btn" onclick="deleteEmployee(${index})">Delete</button>
                         </td>
                     </tr>
@@ -249,22 +279,61 @@
             });
         }
 
-        function autosave(index) {
+        function editEmployee(index) {
+            const row = document.getElementById(`row-${index}`);
+            const cells = row.querySelectorAll("td.editable");
+
+            cells.forEach(cell => {
+                cell.contentEditable = true;
+                cell.classList.add("edit-mode");
+            });
+
+            const buttons = row.querySelectorAll("button");
+            buttons.forEach(button => {
+                button.style.display = "none";
+            });
+
+            const saveBtn = document.createElement("button");
+            saveBtn.textContent = "Save";
+            saveBtn.onclick = function () {
+                saveEmployee(index);
+            };
+
+            const cancelBtn = document.createElement("button");
+            cancelBtn.textContent = "Cancel";
+            cancelBtn.onclick = function () {
+                cancelEdit(index);
+            };
+
+            const actionCell = row.querySelector("td");
+            actionCell.appendChild(saveBtn);
+            actionCell.appendChild(cancelBtn);
+        }
+
+        function saveEmployee(index) {
+            const row = document.getElementById(`row-${index}`);
+            const cells = row.querySelectorAll("td.editable");
+
             const updatedEmployee = {
-                nama: document.getElementById(`nama-${index}`).innerText,
-                nik: document.getElementById(`nik-${index}`).innerText,
-                position: document.getElementById(`position-${index}`).innerText,
-                serviceManager: document.getElementById(`serviceManager-${index}`).innerText,
-                region: document.getElementById(`region-${index}`).innerText,
-                cluster: document.getElementById(`cluster-${index}`).innerText,
-                noHp: document.getElementById(`noHp-${index}`).innerText,
-                email: document.getElementById(`email-${index}`).innerText,
-                noKtp: document.getElementById(`noKtp-${index}`).innerText,
-                statusLisensi: document.getElementById(`statusLisensi-${index}`).innerText,
+                nama: cells[0].innerText,
+                nik: cells[1].innerText,
+                position: cells[2].innerText,
+                serviceManager: cells[3].innerText,
+                region: cells[4].innerText,
+                cluster: cells[5].innerText,
+                noHp: cells[6].innerText,
+                email: cells[7].innerText,
+                noKtp: cells[8].innerText,
+                statusLisensi: cells[9].innerText,
             };
 
             employees[index] = updatedEmployee;
             localStorage.setItem("employees", JSON.stringify(employees));
+            displayEmployees();
+        }
+
+        function cancelEdit(index) {
+            displayEmployees();
         }
 
         function deleteEmployee(index) {
@@ -316,22 +385,4 @@
                             serviceManager: item['Service Manager'] || '',
                             region: item.Region || '',
                             cluster: item.Cluster || '',
-                            noHp: item['No HP'] || '',
-                            email: item.Email || '',
-                            noKtp: item['No KTP'] || '',
-                            statusLisensi: item['Status Lisensi'] || 'Not Yet',
-                        }));
-                    }
-
-                    localStorage.setItem("employees", JSON.stringify(employees));
-                    displayEmployees();
-                };
-
-                reader.readAsArrayBuffer(file);
-            };
-
-            input.click();
-        }
-    </script>
-</body>
-</html>
+                            noHp
