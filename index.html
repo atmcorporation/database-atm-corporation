@@ -6,7 +6,77 @@
     <title>PT HARAPAN UTAMA PRIMA</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <style>
-        /* Style sama seperti sebelumnya */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7e5f2;
+        }
+        .header {
+            background: #a80055;
+            color: #ffffff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .header img {
+            height: 50px;
+        }
+        .form-container {
+            width: 300px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container input {
+            width: 100%;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: #a80055;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background: #920048;
+        }
+        #dashboard {
+            display: none;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        table th {
+            background-color: #a80055;
+            color: white;
+        }
+        button.action {
+            background-color: #a80055;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        button.action:hover {
+            background-color: #920048;
+        }
     </style>
 </head>
 <body>
@@ -34,11 +104,11 @@
     </div>
 
     <!-- Dashboard -->
-    <div id="dashboard" style="display: none;">
+    <div id="dashboard">
         <h2>Dashboard</h2>
-        <button onclick="logout()">Logout</button>
-        <button onclick="addEmployee()">Tambah Karyawan</button>
-        <table border="1" id="employeeTable">
+        <button onclick="logout()" class="action">Logout</button>
+        <button onclick="addEmployee()" class="action">Tambah Karyawan</button>
+        <table id="employeeTable">
             <thead>
                 <tr>
                     <th>Nama</th>
@@ -55,18 +125,84 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Data akan diisi melalui JavaScript -->
+                <!-- Data akan diisi dengan JavaScript -->
             </tbody>
         </table>
     </div>
 
     <script>
+        const users = JSON.parse(localStorage.getItem("users")) || [];
         let employees = JSON.parse(localStorage.getItem("employees")) || [];
+        let currentUser = JSON.parse(localStorage.getItem("currentUser"));
 
-        // Tampilkan data karyawan ke tabel
+        if (currentUser) {
+            showDashboard();
+        }
+
+        function showLogin() {
+            document.getElementById("loginForm").style.display = "block";
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("dashboard").style.display = "none";
+        }
+
+        function showRegister() {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("registerForm").style.display = "block";
+            document.getElementById("dashboard").style.display = "none";
+        }
+
+        function showDashboard() {
+            document.getElementById("loginForm").style.display = "none";
+            document.getElementById("registerForm").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+            displayEmployees();
+        }
+
+        function login() {
+            const username = document.getElementById("loginUsername").value;
+            const password = document.getElementById("loginPassword").value;
+            const user = users.find((u) => u.username === username && u.password === password);
+
+            if (user) {
+                currentUser = user;
+                localStorage.setItem("currentUser", JSON.stringify(user));
+                alert("Login berhasil!");
+                showDashboard();
+            } else {
+                alert("Username atau password salah!");
+            }
+        }
+
+        function register() {
+            const username = document.getElementById("registerUsername").value;
+            const password = document.getElementById("registerPassword").value;
+
+            if (!username || !password) {
+                alert("Username dan password wajib diisi!");
+                return;
+            }
+
+            if (users.find((u) => u.username === username)) {
+                alert("Username sudah terdaftar!");
+                return;
+            }
+
+            users.push({ username, password });
+            localStorage.setItem("users", JSON.stringify(users));
+            alert("Register berhasil! Silakan login.");
+            showLogin();
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem("currentUser");
+            alert("Logout berhasil!");
+            showLogin();
+        }
+
         function displayEmployees() {
             const tbody = document.querySelector("#employeeTable tbody");
-            tbody.innerHTML = ""; // Bersihkan isi tabel
+            tbody.innerHTML = "";
 
             employees.forEach((employee, index) => {
                 const row = `
@@ -82,8 +218,8 @@
                         <td>${employee.noKtp}</td>
                         <td>${employee.statusLisensi}</td>
                         <td>
-                            <button onclick="editEmployee(${index})">Edit</button>
-                            <button onclick="deleteEmployee(${index})">Hapus</button>
+                            <button class="action" onclick="editEmployee(${index})">Edit</button>
+                            <button class="action" onclick="deleteEmployee(${index})">Hapus</button>
                         </td>
                     </tr>
                 `;
@@ -91,7 +227,6 @@
             });
         }
 
-        // Tambah karyawan baru
         function addEmployee() {
             const nama = prompt("Nama:");
             const nik = prompt("NIK:");
@@ -104,27 +239,21 @@
             const noKtp = prompt("No KTP:");
             const statusLisensi = prompt("Status Lisensi (Not Yet/Completed):");
 
+            if (!nama || !nik) {
+                alert("Nama dan NIK wajib diisi!");
+                return;
+            }
+
             employees.push({
-                nama,
-                nik,
-                position,
-                serviceManager,
-                region,
-                cluster,
-                noHp,
-                email,
-                noKtp,
-                statusLisensi,
+                nama, nik, position, serviceManager, region, cluster, noHp, email, noKtp, statusLisensi,
             });
 
             localStorage.setItem("employees", JSON.stringify(employees));
             displayEmployees();
         }
 
-        // Edit data karyawan
         function editEmployee(index) {
             const employee = employees[index];
-
             const nama = prompt("Nama:", employee.nama);
             const nik = prompt("NIK:", employee.nik);
             const position = prompt("Posisi:", employee.position);
@@ -134,44 +263,19 @@
             const noHp = prompt("No HP:", employee.noHp);
             const email = prompt("Email:", employee.email);
             const noKtp = prompt("No KTP:", employee.noKtp);
-            const statusLisensi = prompt(
-                "Status Lisensi (Not Yet/Completed):",
-                employee.statusLisensi
-            );
+            const statusLisensi = prompt("Status Lisensi (Not Yet/Completed):", employee.statusLisensi);
 
-            employees[index] = {
-                nama,
-                nik,
-                position,
-                serviceManager,
-                region,
-                cluster,
-                noHp,
-                email,
-                noKtp,
-                statusLisensi,
-            };
-
+            employees[index] = { nama, nik, position, serviceManager, region, cluster, noHp, email, noKtp, statusLisensi };
             localStorage.setItem("employees", JSON.stringify(employees));
             displayEmployees();
         }
 
-        // Hapus data karyawan
         function deleteEmployee(index) {
             if (confirm("Yakin ingin menghapus data ini?")) {
                 employees.splice(index, 1);
                 localStorage.setItem("employees", JSON.stringify(employees));
                 displayEmployees();
             }
-        }
-
-        // Fungsi login/logout dan navigasi sama seperti sebelumnya
-
-        function showDashboard() {
-            displayEmployees();
-            document.getElementById("dashboard").style.display = "block";
-            document.getElementById("loginForm").style.display = "none";
-            document.getElementById("registerForm").style.display = "none";
         }
     </script>
 </body>
