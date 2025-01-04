@@ -368,6 +368,70 @@ window.onload = function() {
     }
 };
 
+            // Fungsi untuk menambahkan tombol "Save"
+function addSaveButton(row) {
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.onclick = function() {
+        saveEmployeeData(); // Simpan data setelah mengklik tombol "Save"
+        alert('Data saved successfully!');
+    };
+    row.cells[row.cells.length - 1].appendChild(saveButton);
+}
+
+// Perbarui fungsi loadEmployeeData untuk menambahkan tombol "Save"
+function loadEmployeeData() {
+    const employeeData = JSON.parse(localStorage.getItem('employeeData')) || [];
+    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    employeeData.forEach((employee) => {
+        const row = table.insertRow();
+        const checkboxCell = row.insertCell();
+        checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+        Object.values(employee).forEach((value) => {
+            const cell = row.insertCell();
+            cell.textContent = value;
+            cell.contentEditable = true; // Jadikan sel dapat diedit
+        });
+
+        const actionsCell = row.insertCell();
+        actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+        addSaveButton(row); // Tambahkan tombol "Save"
+    });
+
+    addEditableListeners(); // Tambahkan event listener pada sel yang dapat diedit
+}
+
+// Fungsi untuk menambahkan tombol "Save" pada baris baru
+function addEmployee() {
+    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    const row = table.insertRow();
+    const checkboxCell = row.insertCell();
+    checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+    for (let i = 0; i < 10; i++) {
+        const cell = row.insertCell();
+        cell.contentEditable = true; // Jadikan sel dapat diedit
+    }
+    const actionsCell = row.insertCell();
+    actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+    addSaveButton(row); // Tambahkan tombol "Save"
+    addEditableListeners(); // Tambahkan event listener pada sel yang dapat diedit
+}
+
+// Panggil fungsi untuk menambahkan event listener setelah memuat data karyawan
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        loadEmployeeData(); // Memuat data karyawan jika sudah login
+        addCheckboxes(); // Tambahkan checkboxes
+        addDeleteButton(); // Tambahkan tombol delete
+    } else {
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('mainPage').style.display = 'none';
+    }
+};
+
             // Simpan data yang diimpor ke localStorage
             localStorage.setItem('employeeData', JSON.stringify(jsonData)); // Menyimpan data karyawan setelah impor
             alert('Data imported successfully!');
