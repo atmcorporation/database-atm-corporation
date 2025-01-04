@@ -81,9 +81,6 @@
             background-color: #a80055;
             color: white;
         }
-        .save-btn {
-            background-color: #4CAF50;
-        }
         .delete-btn {
             background-color: #f44336;
         }
@@ -233,18 +230,17 @@
             employees.forEach((employee, index) => {
                 const row = `
                     <tr id="row-${index}">
-                        <td contenteditable="true" id="nama-${index}">${employee.nama}</td>
-                        <td contenteditable="true" id="nik-${index}">${employee.nik}</td>
-                        <td contenteditable="true" id="position-${index}">${employee.position}</td>
-                        <td contenteditable="true" id="serviceManager-${index}">${employee.serviceManager}</td>
-                        <td contenteditable="true" id="region-${index}">${employee.region}</td>
-                        <td contenteditable="true" id="cluster-${index}">${employee.cluster}</td>
-                        <td contenteditable="true" id="noHp-${index}">${employee.noHp}</td>
-                        <td contenteditable="true" id="email-${index}">${employee.email}</td>
-                        <td contenteditable="true" id="noKtp-${index}">${employee.noKtp}</td>
-                        <td contenteditable="true" id="statusLisensi-${index}">${employee.statusLisensi}</td>
+                        <td contenteditable="true" id="nama-${index}" onblur="autosave(${index})">${employee.nama}</td>
+                        <td contenteditable="true" id="nik-${index}" onblur="autosave(${index})">${employee.nik}</td>
+                        <td contenteditable="true" id="position-${index}" onblur="autosave(${index})">${employee.position}</td>
+                        <td contenteditable="true" id="serviceManager-${index}" onblur="autosave(${index})">${employee.serviceManager}</td>
+                        <td contenteditable="true" id="region-${index}" onblur="autosave(${index})">${employee.region}</td>
+                        <td contenteditable="true" id="cluster-${index}" onblur="autosave(${index})">${employee.cluster}</td>
+                        <td contenteditable="true" id="noHp-${index}" onblur="autosave(${index})">${employee.noHp}</td>
+                        <td contenteditable="true" id="email-${index}" onblur="autosave(${index})">${employee.email}</td>
+                        <td contenteditable="true" id="noKtp-${index}" onblur="autosave(${index})">${employee.noKtp}</td>
+                        <td contenteditable="true" id="statusLisensi-${index}" onblur="autosave(${index})">${employee.statusLisensi}</td>
                         <td>
-                            <button class="save-btn" onclick="saveEmployee(${index})">Save</button>
                             <button class="delete-btn" onclick="deleteEmployee(${index})">Delete</button>
                         </td>
                     </tr>
@@ -253,7 +249,7 @@
             });
         }
 
-        function saveEmployee(index) {
+        function autosave(index) {
             const updatedEmployee = {
                 nama: document.getElementById(`nama-${index}`).innerText,
                 nik: document.getElementById(`nik-${index}`).innerText,
@@ -269,7 +265,6 @@
 
             employees[index] = updatedEmployee;
             localStorage.setItem("employees", JSON.stringify(employees));
-            displayEmployees();
         }
 
         function deleteEmployee(index) {
