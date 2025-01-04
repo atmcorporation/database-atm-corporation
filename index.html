@@ -91,6 +91,41 @@
             border-radius: 5px;
             border: 1px solid #ccc;
         }
+
+        #addEmployeeForm {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #addEmployeeForm label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        #addEmployeeForm input {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #addEmployeeForm button {
+            background-color: #ff99cc;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #addEmployeeForm button:hover {
+            background-color: #ff66b3;
+        }
     </style>
 </head>
 <body>
@@ -111,11 +146,45 @@
         <h2>Employee Database</h2>
 
         <div class="actions">
-            <button onclick="addEmployee()">Add Employee</button>
+            <button onclick="showAddEmployeeForm()">Add Employee</button>
             <button onclick="importExcel()">Import Excel</button>
             <button onclick="exportExcel()">Export Excel</button>
             <input type="text" id="search" placeholder="Search..." onkeyup="searchEmployee()">
         </div>
+
+        <form id="addEmployeeForm" onsubmit="addEmployee(event)">
+            <label for="name">Name:</label>
+            <input type="text" id="name" required>
+
+            <label for="nik">NIK:</label>
+            <input type="text" id="nik" required>
+
+            <label for="position">Position:</label>
+            <input type="text" id="position" required>
+
+            <label for="region">Region:</label>
+            <input type="text" id="region" required>
+
+            <label for="cluster">Cluster:</label>
+            <input type="text" id="cluster" required>
+
+            <label for="manager">Manager:</label>
+            <input type="text" id="manager" required>
+
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" required>
+
+            <label for="id">ID:</label>
+            <input type="text" id="id" required>
+
+            <label for="joinDate">Join Date:</label>
+            <input type="date" id="joinDate" required>
+
+            <label for="licenseStatus">License Status:</label>
+            <input type="text" id="licenseStatus" required>
+
+            <button type="submit">Add Employee</button>
+        </form>
 
         <table>
             <thead>
@@ -159,37 +228,42 @@
             alert('Registration feature coming soon!');
         }
 
-        function addEmployee() {
-            const name = prompt('Enter employee name:');
-            const nik = prompt('Enter NIK:');
-            const position = prompt('Enter position:');
-            const region = prompt('Enter region:');
-            const cluster = prompt('Enter cluster:');
-            const manager = prompt('Enter manager:');
-            const phone = prompt('Enter phone number:');
-            const id = prompt('Enter ID number:');
-            const joinDate = prompt('Enter join date:');
-            const licenseStatus = prompt('Enter license status:');
+        function showAddEmployeeForm() {
+            document.getElementById('addEmployeeForm').style.display = 'block';
+        }
 
-            if (name && nik && position && region && cluster && manager && phone && id && joinDate && licenseStatus) {
-                const table = document.getElementById('employeeTable');
-                const row = table.insertRow();
+        function addEmployee(event) {
+            event.preventDefault();
 
-                row.innerHTML = `
-                    <td>${name}</td>
-                    <td>${nik}</td>
-                    <td>${position}</td>
-                    <td>${region}</td>
-                    <td>${cluster}</td>
-                    <td>${manager}</td>
-                    <td>${phone}</td>
-                    <td>${id}</td>
-                    <td>${joinDate}</td>
-                    <td>${licenseStatus}</td>
-                `;
-            } else {
-                alert('All fields are required.');
-            }
+            const name = document.getElementById('name').value;
+            const nik = document.getElementById('nik').value;
+            const position = document.getElementById('position').value;
+            const region = document.getElementById('region').value;
+            const cluster = document.getElementById('cluster').value;
+            const manager = document.getElementById('manager').value;
+            const phone = document.getElementById('phone').value;
+            const id = document.getElementById('id').value;
+            const joinDate = document.getElementById('joinDate').value;
+            const licenseStatus = document.getElementById('licenseStatus').value;
+
+            const table = document.getElementById('employeeTable');
+            const row = table.insertRow();
+
+            row.innerHTML = `
+                <td>${name}</td>
+                <td>${nik}</td>
+                <td>${position}</td>
+                <td>${region}</td>
+                <td>${cluster}</td>
+                <td>${manager}</td>
+                <td>${phone}</td>
+                <td>${id}</td>
+                <td>${joinDate}</td>
+                <td>${licenseStatus}</td>
+            `;
+
+            document.getElementById('addEmployeeForm').reset();
+            document.getElementById('addEmployeeForm').style.display = 'none';
         }
 
         function importExcel() {
