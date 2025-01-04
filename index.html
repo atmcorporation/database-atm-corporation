@@ -113,17 +113,6 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
-        .edit-mode button {
-            padding: 5px 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .edit-mode button:hover {
-            background-color: #45a049;
-        }
     </style>
 </head>
 <body>
@@ -277,63 +266,27 @@
                 `;
                 tbody.innerHTML += row;
             });
+
+            makeCellsEditable();
         }
 
-        function editEmployee(index) {
-            const row = document.getElementById(`row-${index}`);
-            const cells = row.querySelectorAll("td.editable");
-
-            cells.forEach(cell => {
+        function makeCellsEditable() {
+            const editableCells = document.querySelectorAll('.editable');
+            editableCells.forEach(cell => {
                 cell.contentEditable = true;
-                cell.classList.add("edit-mode");
+                cell.addEventListener('blur', function () {
+                    autoSave(cell);
+                });
             });
-
-            const buttons = row.querySelectorAll("button");
-            buttons.forEach(button => {
-                button.style.display = "none";
-            });
-
-            const saveBtn = document.createElement("button");
-            saveBtn.textContent = "Save";
-            saveBtn.onclick = function () {
-                saveEmployee(index);
-            };
-
-            const cancelBtn = document.createElement("button");
-            cancelBtn.textContent = "Cancel";
-            cancelBtn.onclick = function () {
-                cancelEdit(index);
-            };
-
-            const actionCell = row.querySelector("td");
-            actionCell.appendChild(saveBtn);
-            actionCell.appendChild(cancelBtn);
         }
 
-        function saveEmployee(index) {
-            const row = document.getElementById(`row-${index}`);
-            const cells = row.querySelectorAll("td.editable");
+        function autoSave(cell) {
+            const cellId = cell.id.split('-')[1];
+            const field = cell.id.split('-')[0];
+            const rowIndex = parseInt(cellId);
 
-            const updatedEmployee = {
-                nama: cells[0].innerText,
-                nik: cells[1].innerText,
-                position: cells[2].innerText,
-                serviceManager: cells[3].innerText,
-                region: cells[4].innerText,
-                cluster: cells[5].innerText,
-                noHp: cells[6].innerText,
-                email: cells[7].innerText,
-                noKtp: cells[8].innerText,
-                statusLisensi: cells[9].innerText,
-            };
-
-            employees[index] = updatedEmployee;
+            employees[rowIndex][field] = cell.innerText;
             localStorage.setItem("employees", JSON.stringify(employees));
-            displayEmployees();
-        }
-
-        function cancelEdit(index) {
-            displayEmployees();
         }
 
         function deleteEmployee(index) {
