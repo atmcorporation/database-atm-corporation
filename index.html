@@ -49,6 +49,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         table th, table td {
@@ -60,6 +61,13 @@
         table th {
             background-color: #ff99cc;
             color: #fff;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .actions button {
@@ -74,6 +82,14 @@
 
         .actions button:hover {
             background-color: #ff66b3;
+        }
+
+        .actions input {
+            flex: 1;
+            margin-left: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
     </style>
 </head>
@@ -144,7 +160,36 @@
         }
 
         function addEmployee() {
-            alert('Add Employee feature coming soon!');
+            const name = prompt('Enter employee name:');
+            const nik = prompt('Enter NIK:');
+            const position = prompt('Enter position:');
+            const region = prompt('Enter region:');
+            const cluster = prompt('Enter cluster:');
+            const manager = prompt('Enter manager:');
+            const phone = prompt('Enter phone number:');
+            const id = prompt('Enter ID number:');
+            const joinDate = prompt('Enter join date:');
+            const licenseStatus = prompt('Enter license status:');
+
+            if (name && nik && position && region && cluster && manager && phone && id && joinDate && licenseStatus) {
+                const table = document.getElementById('employeeTable');
+                const row = table.insertRow();
+
+                row.innerHTML = `
+                    <td>${name}</td>
+                    <td>${nik}</td>
+                    <td>${position}</td>
+                    <td>${region}</td>
+                    <td>${cluster}</td>
+                    <td>${manager}</td>
+                    <td>${phone}</td>
+                    <td>${id}</td>
+                    <td>${joinDate}</td>
+                    <td>${licenseStatus}</td>
+                `;
+            } else {
+                alert('All fields are required.');
+            }
         }
 
         function importExcel() {
