@@ -641,4 +641,146 @@ window.onload = function() {
             alert('Changes saved successfully!');
         });
 
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Database</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .container {
+            margin-top: 20px;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        table {
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            text-align: left;
+            padding: 10px;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-save {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center">Employee Database</h1>
+        <div class="d-flex justify-content-between mb-3">
+            <button class="btn btn-primary" onclick="addEmployee()">Add Employee</button>
+            <button class="btn btn-success" onclick="importData()">Import Data</button>
+            <button class="btn btn-warning" onclick="exportData()">Export to Excel</button>
+        </div>
+
+        <input type="text" id="search" class="form-control" placeholder="Search by Name, NIK, Position, etc..." onkeyup="searchEmployee()">
+
+        <button class="btn btn-danger mt-3" onclick="deleteSelected()">Delete Selected</button>
+
+        <table class="table table-bordered mt-3">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" onclick="selectAll(this)"></th>
+                    <th>Name</th>
+                    <th>NIK</th>
+                    <th>Position</th>
+                    <th>Service Manager</th>
+                    <th>Region</th>
+                    <th>Cluster</th>
+                    <th>Phone</th>
+                    <th>Email</th>
+                    <th>KTP</th>
+                    <th>Join Date</th>
+                    <th>License Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="employeeTable">
+                <!-- Employee rows will go here -->
+            </tbody>
+        </table>
+
+        <button class="btn btn-primary btn-save" onclick="saveChanges()">Save Changes</button>
+    </div>
+
+    <script>
+        function addEmployee() {
+            alert('Add Employee functionality to be implemented');
+        }
+
+        function importData() {
+            alert('Import Data functionality to be implemented');
+        }
+
+        function exportData() {
+            alert('Export to Excel functionality to be implemented');
+        }
+
+        function deleteSelected() {
+            const checkboxes = document.querySelectorAll('#employeeTable input[type="checkbox"]:checked');
+            checkboxes.forEach(checkbox => {
+                checkbox.closest('tr').remove();
+            });
+        }
+
+        function searchEmployee() {
+            const searchValue = document.getElementById('search').value.toLowerCase();
+            const rows = document.querySelectorAll('#employeeTable tr');
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const match = Array.from(cells).some(cell => cell.textContent.toLowerCase().includes(searchValue));
+                row.style.display = match ? '' : 'none';
+            });
+        }
+
+        function saveChanges() {
+            const rows = document.querySelectorAll('#employeeTable tr');
+            const data = [];
+
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                const rowData = {};
+                if (cells.length > 0) {
+                    rowData.name = cells[1]?.textContent || '';
+                    rowData.nik = cells[2]?.textContent || '';
+                    rowData.position = cells[3]?.textContent || '';
+                    rowData.serviceManager = cells[4]?.textContent || '';
+                    rowData.region = cells[5]?.textContent || '';
+                    rowData.cluster = cells[6]?.textContent || '';
+                    rowData.phone = cells[7]?.textContent || '';
+                    rowData.email = cells[8]?.textContent || '';
+                    rowData.ktp = cells[9]?.textContent || '';
+                    rowData.joinDate = cells[10]?.textContent || '';
+                    rowData.licenseStatus = cells[11]?.textContent || '';
+                    data.push(rowData);
+                }
+            });
+
+            // Simulate saving to database
+            console.log('Saved Data:', data);
+            alert('Changes have been saved successfully!');
+        }
+
+        function selectAll(source) {
+            const checkboxes = document.querySelectorAll('#employeeTable input[type="checkbox"]');
+            checkboxes.forEach(checkbox => checkbox.checked = source.checked);
 </script>
