@@ -4,7 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smartfren Employee Database</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js">
+        // Fungsi untuk menyimpan perubahan ke localStorage
+        document.getElementById('saveChangesButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const rows = table.rows;
+            const updatedData = [];
+
+            // Loop melalui setiap baris tabel untuk menyimpan data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    nik: cells[1].textContent.trim(),
+                    position: cells[2].textContent.trim(),
+                    serviceManager: cells[3].textContent.trim(),
+                    region: cells[4].textContent.trim(),
+                    cluster: cells[5].textContent.trim(),
+                    phone: cells[6].textContent.trim(),
+                    email: cells[7].textContent.trim(),
+                    ktp: cells[8].textContent.trim(),
+                    joinDate: cells[9].textContent.trim(),
+                    licenseStatus: cells[10].textContent.trim()
+                };
+                updatedData.push(rowData);
+            }
+
+            // Simpan data ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(updatedData));
+            alert('Changes saved successfully!');
+        });
+
+</script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -91,7 +122,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smartfren Employee Database</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js">
+        // Fungsi untuk menyimpan perubahan ke localStorage
+        document.getElementById('saveChangesButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const rows = table.rows;
+            const updatedData = [];
+
+            // Loop melalui setiap baris tabel untuk menyimpan data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    nik: cells[1].textContent.trim(),
+                    position: cells[2].textContent.trim(),
+                    serviceManager: cells[3].textContent.trim(),
+                    region: cells[4].textContent.trim(),
+                    cluster: cells[5].textContent.trim(),
+                    phone: cells[6].textContent.trim(),
+                    email: cells[7].textContent.trim(),
+                    ktp: cells[8].textContent.trim(),
+                    joinDate: cells[9].textContent.trim(),
+                    licenseStatus: cells[10].textContent.trim()
+                };
+                updatedData.push(rowData);
+            }
+
+            // Simpan data ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(updatedData));
+            alert('Changes saved successfully!');
+        });
+
+</script>
 </head>
 <body>
     <header>
@@ -141,6 +203,9 @@
                 <!-- Data Rows -->
             </tbody>
         </table>
+
+        <button id="saveChangesButton">Save Changes</button>
+
 </div>
 
     <footer>
@@ -545,4 +610,35 @@ window.onload = function() {
                 row.style.display = match ? '' : 'none';
             });
         });
-    </script>
+    
+        // Fungsi untuk menyimpan perubahan ke localStorage
+        document.getElementById('saveChangesButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const rows = table.rows;
+            const updatedData = [];
+
+            // Loop melalui setiap baris tabel untuk menyimpan data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    nik: cells[1].textContent.trim(),
+                    position: cells[2].textContent.trim(),
+                    serviceManager: cells[3].textContent.trim(),
+                    region: cells[4].textContent.trim(),
+                    cluster: cells[5].textContent.trim(),
+                    phone: cells[6].textContent.trim(),
+                    email: cells[7].textContent.trim(),
+                    ktp: cells[8].textContent.trim(),
+                    joinDate: cells[9].textContent.trim(),
+                    licenseStatus: cells[10].textContent.trim()
+                };
+                updatedData.push(rowData);
+            }
+
+            // Simpan data ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(updatedData));
+            alert('Changes saved successfully!');
+        });
+
+</script>
