@@ -529,6 +529,154 @@ window.onload = function() {
             }
         });
 
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Database with Save Feature</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #007bff;
+            padding: 10px 20px;
+            color: white;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            background-color: #007bff;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Employee Database</h1>
+    </header>
+
+    <div class="container">
+        <div class="actions">
+            <button onclick="addRow()">Add Row</button>
+            <button onclick="saveChanges()">Save Changes</button>
+        </div>
+        <table id="employeeTable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Region</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td contenteditable="true">John Doe</td>
+                    <td contenteditable="true">Manager</td>
+                    <td contenteditable="true">North</td>
+                    <td><button onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+                <tr>
+                    <td contenteditable="true">Jane Smith</td>
+                    <td contenteditable="true">Developer</td>
+                    <td contenteditable="true">East</td>
+                    <td><button onclick="deleteRow(this)">Delete</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function addRow() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const row = table.insertRow();
+            row.innerHTML = `
+                <td contenteditable="true">New Employee</td>
+                <td contenteditable="true">Position</td>
+                <td contenteditable="true">Region</td>
+                <td><button onclick="deleteRow(this)">Delete</button></td>
+            `;
+        }
+
+        function deleteRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+        }
+
+        function saveChanges() {
+            const table = document.getElementById('employeeTable');
+            const rows = table.getElementsByTagName('tbody')[0].rows;
+            const data = [];
+
+            // Loop through rows and collect data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    position: cells[1].textContent.trim(),
+                    region: cells[2].textContent.trim()
+                };
+                data.push(rowData);
+            }
+
+            // Save data (e.g., send to backend or store locally)
+            console.log('Saved Data:', data);
+            alert('Changes saved successfully!');
+        }
+    </script>
+</body>
+</html>
+
+
         // Filter functionality
         document.getElementById('filterInput').addEventListener('keyup', function() {
             const filter = this.value.toLowerCase();
