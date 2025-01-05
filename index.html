@@ -385,12 +385,6 @@ document.getElementById('importFile').addEventListener('change', function(e) {
                 const actionsCell = row.insertCell();
                 actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
             });
-
-            // Tambahkan event listener pada setiap sel yang dapat diedit
-function addEditableListeners() {
-    const cells = document.querySelectorAll('#employeeTable tbody td[contenteditable="true"]');
-    cells.forEach(cell => {
-        cell.addEventListener('blur', function() {
             saveEmployeeData(); // Simpan data setelah selesai mengedit
         });
     });
