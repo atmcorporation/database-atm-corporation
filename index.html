@@ -4,7 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smartfren Employee Database</title>
-    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js">
+        // Fungsi untuk menyimpan perubahan ke localStorage
+        document.getElementById('saveChangesButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const rows = table.rows;
+            const updatedData = [];
+
+            // Loop melalui setiap baris tabel untuk menyimpan data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    nik: cells[1].textContent.trim(),
+                    position: cells[2].textContent.trim(),
+                    serviceManager: cells[3].textContent.trim(),
+                    region: cells[4].textContent.trim(),
+                    cluster: cells[5].textContent.trim(),
+                    phone: cells[6].textContent.trim(),
+                    email: cells[7].textContent.trim(),
+                    ktp: cells[8].textContent.trim(),
+                    joinDate: cells[9].textContent.trim(),
+                    licenseStatus: cells[10].textContent.trim()
+                };
+                updatedData.push(rowData);
+            }
+
+            // Simpan data ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(updatedData));
+            alert('Changes saved successfully!');
+        });
+
+</script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -17,7 +48,7 @@
             overflow: hidden;
         }
         header {
-            background: #d81b60;
+            background: #d81b60; /* Pink sedikit tua */
             color: #fff;
             padding: 10px 0;
             text-align: center;
@@ -42,7 +73,7 @@
             border-radius: 5px;
         }
         button {
-            background: #d81b60;
+            background: #d81b60; /* Pink sedikit tua */
             color: #fff;
             padding: 10px 15px;
             border: none;
@@ -50,7 +81,7 @@
             cursor: pointer;
         }
         button:hover {
-            background: #c2185b;
+            background: #c2185b; /* Pink sedikit lebih tua */
         }
         table {
             width: 100%;
@@ -73,10 +104,10 @@
             font-size: 16px;
         }
         footer {
-            background: #d81b60;
+            background: #d81b60; /* white */
             color: #fff;
             text-align: center;
-            padding: 10px 0;
+            padding: 0px 0;
             position: fixed;
             width: 100%;
             bottom: 0;
@@ -85,13 +116,51 @@
             max-height: 30px;
             vertical-align: middle;
         }
+        
     </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smartfren Employee Database</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js">
+        // Fungsi untuk menyimpan perubahan ke localStorage
+        document.getElementById('saveChangesButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const rows = table.rows;
+            const updatedData = [];
+
+            // Loop melalui setiap baris tabel untuk menyimpan data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    nik: cells[1].textContent.trim(),
+                    position: cells[2].textContent.trim(),
+                    serviceManager: cells[3].textContent.trim(),
+                    region: cells[4].textContent.trim(),
+                    cluster: cells[5].textContent.trim(),
+                    phone: cells[6].textContent.trim(),
+                    email: cells[7].textContent.trim(),
+                    ktp: cells[8].textContent.trim(),
+                    joinDate: cells[9].textContent.trim(),
+                    licenseStatus: cells[10].textContent.trim()
+                };
+                updatedData.push(rowData);
+            }
+
+            // Simpan data ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(updatedData));
+            alert('Changes saved successfully!');
+        });
+
+</script>
 </head>
 <body>
     <header>
         <img src="https://storage.googleapis.com/ekrutassets/blogs/images/000/005/202/original/Smartfren-Logo.wine.png" alt="Smartfren Logo">
-        <p>Selamat Datang di Website ATM CORPORATION project SMARTFREN</p>
+<p>Selamat Datang di Website ATM CORPORATION project SMARTFREN</p>   
     </header>
+
     <div id="loginPage" class="container">
         <form id="loginForm">
             <h2>Login</h2>
@@ -101,6 +170,7 @@
             <button type="button" id="registerButton">Register</button>
         </form>
     </div>
+
     <div id="mainPage" class="container" style="display: none;">
         <button id="logoutButton">Logout</button>
         <h2>Employee Database</h2>
@@ -109,7 +179,10 @@
         <input type="file" id="importFile" style="display: none;" accept=".xlsx" />
         <button id="exportButton">Export to Excel</button>
         <button id="saveChangesButton" style="margin-top: 10px;">Save Changes</button>
+
+        <!-- Filter input for searching data -->
         <input type="text" id="filterInput" placeholder="Search by Name, NIK, Position, etc..." />
+
         <table id="employeeTable">
             <thead>
                 <tr>
@@ -131,11 +204,13 @@
                 <!-- Data Rows -->
             </tbody>
         </table>
-    </div>
+</div>
+
     <footer>
         <img src="https://harapanutama.co.id/assets/images/logo.png" alt="PT HARAPAN UTAMA Prima Logo">
         <p>PT HARAPAN UTAMA PRIMA</p>
     </footer>
+
     <script>
         // Simpan pengguna terdaftar
         const users = JSON.parse(localStorage.getItem('users')) || [];
@@ -145,7 +220,7 @@
         function saveEmployeeData() {
             const rows = document.getElementById('employeeTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
             const employeeData = [];
-
+            
             Array.from(rows).forEach(function(row) {
                 const rowData = {};
                 const cells = row.getElementsByTagName('td');
@@ -162,6 +237,7 @@
                 rowData.licenseStatus = cells[10].textContent;
                 employeeData.push(rowData);
             });
+
             localStorage.setItem('employeeData', JSON.stringify(employeeData)); // Menyimpan data karyawan
         }
 
@@ -175,6 +251,7 @@
                     const cell = row.insertCell();
                     cell.textContent = value;
                 });
+
                 const actionsCell = row.insertCell();
                 actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
             });
@@ -198,6 +275,7 @@
             e.preventDefault();
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+
             const user = users.find(u => u.username === username && u.password === password);
             if (user) {
                 localStorage.setItem('currentUser', username); // Simpan status login
@@ -231,4 +309,334 @@
 
         // Add employee
         document.getElementById('addEmployeeButton').addEventListener('click', function() {
-            const table = document.getElementById('employeeTable').getElementsByTagName('
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const row = table.insertRow();
+
+            for (let i = 0; i < 10; i++) {
+                const cell = row.insertCell();
+                if (i === 8) {
+                    cell.textContent = new Date().toISOString().split('T')[0]; // Default join date
+                } else if (i === 9) {
+                    cell.innerHTML = `<select><option value="Not Yet">Not Yet</option><option value="Completed">Completed</option></select>`;
+                } else {
+                    cell.contentEditable = true;
+                }
+            }
+
+            // Menambahkan kolom untuk posisi
+            const positionCell = row.insertCell();
+            positionCell.contentEditable = true;
+
+            const actionsCell = row.insertCell();
+            actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
+
+            saveEmployeeData(); // Simpan data setelah menambahkan karyawan
+        });
+
+        // Edit row
+        function editRow(button) {
+            const row = button.parentElement.parentElement;
+            row.contentEditable = true;
+            alert('Now editing. Click outside the cell to save.');
+        }
+
+        // Delete row
+        function deleteRow(button) {
+            const row = button.parentElement.parentElement;
+            row.remove();
+            saveEmployeeData(); // Simpan data setelah menghapus baris
+        }
+
+        // Export to Excel
+        document.getElementById('exportButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable');
+            const workbook = XLSX.utils.table_to_book(table);
+            XLSX.writeFile(workbook, 'Smartfren_Employee_Data.xlsx');
+        });
+
+        // Import Data button
+        document.getElementById('importButton').addEventListener('click', function() {
+            document.getElementById('importFile').click(); // Trigger file input click
+        });
+
+        // Handle file selection
+document.getElementById('importFile').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const data = event.target.result;
+            const workbook = XLSX.read(data, { type: 'binary' });
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const jsonData = XLSX.utils.sheet_to_json(sheet);
+            
+            // Loop untuk memasukkan data ke dalam tabel
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            jsonData.forEach((employee) => {
+                const row = table.insertRow();
+                
+                // Loop untuk mengisi setiap kolom berdasarkan data
+                Object.values(employee).forEach((value) => {
+                    const cell = row.insertCell();
+                    cell.textContent = value;
+                });
+                
+                // Tambahkan kolom untuk actions (edit & delete)
+                const actionsCell = row.insertCell();
+                actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
+            });
+
+            // Tambahkan event listener pada setiap sel yang dapat diedit
+function addEditableListeners() {
+    const cells = document.querySelectorAll('#employeeTable tbody td[contenteditable="true"]');
+    cells.forEach(cell => {
+        cell.addEventListener('blur', function() {
+            saveEmployeeData(); // Simpan data setelah selesai mengedit
+        });
+    });
+}
+
+// Perbarui fungsi loadEmployeeData untuk menambahkan event listener pada sel yang dapat diedit
+function loadEmployeeData() {
+    const employeeData = JSON.parse(localStorage.getItem('employeeData')) || [];
+    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    employeeData.forEach((employee) => {
+        const row = table.insertRow();
+        const checkboxCell = row.insertCell();
+        checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+        Object.values(employee).forEach((value) => {
+            const cell = row.insertCell();
+            cell.textContent = value;
+            cell.contentEditable = true; // Jadikan sel dapat diedit
+        });
+
+        const actionsCell = row.insertCell();
+        actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+    });
+
+    addEditableListeners(); // Tambahkan event listener pada sel yang dapat diedit
+}
+
+// Panggil fungsi untuk menambahkan event listener setelah memuat data karyawan
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        loadEmployeeData(); // Memuat data karyawan jika sudah login
+        addCheckboxes(); // Tambahkan checkboxes
+        addDeleteButton(); // Tambahkan tombol delete
+    } else {
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('mainPage').style.display = 'none';
+    }
+};
+
+            // Fungsi untuk menambahkan tombol "Save"
+function addSaveButton(row) {
+    const saveButton = document.createElement('button');
+    saveButton.textContent = 'Save';
+    saveButton.onclick = function() {
+        saveEmployeeData(); // Simpan data setelah mengklik tombol "Save"
+        alert('Data saved successfully!');
+    };
+    row.cells[row.cells.length - 1].appendChild(saveButton);
+}
+
+// Perbarui fungsi loadEmployeeData untuk menambahkan tombol "Save"
+function loadEmployeeData() {
+    const employeeData = JSON.parse(localStorage.getItem('employeeData')) || [];
+    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    employeeData.forEach((employee) => {
+        const row = table.insertRow();
+        const checkboxCell = row.insertCell();
+        checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+        Object.values(employee).forEach((value) => {
+            const cell = row.insertCell();
+            cell.textContent = value;
+            cell.contentEditable = true; // Jadikan sel dapat diedit
+        });
+
+        const actionsCell = row.insertCell();
+        actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+        addSaveButton(row); // Tambahkan tombol "Save"
+    });
+
+    addEditableListeners(); // Tambahkan event listener pada sel yang dapat diedit
+}
+
+// Fungsi untuk menambahkan tombol "Save" pada baris baru
+function addEmployee() {
+    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    const row = table.insertRow();
+    const checkboxCell = row.insertCell();
+    checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+    for (let i = 0; i < 10; i++) {
+        const cell = row.insertCell();
+        cell.contentEditable = true; // Jadikan sel dapat diedit
+    }
+    const actionsCell = row.insertCell();
+    actionsCell.innerHTML = '<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>';
+    addSaveButton(row); // Tambahkan tombol "Save"
+    addEditableListeners(); // Tambahkan event listener pada sel yang dapat diedit
+}
+
+// Panggil fungsi untuk menambahkan event listener setelah memuat data karyawan
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        loadEmployeeData(); // Memuat data karyawan jika sudah login
+        addCheckboxes(); // Tambahkan checkboxes
+        addDeleteButton(); // Tambahkan tombol delete
+    } else {
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('mainPage').style.display = 'none';
+    }
+};
+
+            // Simpan data yang diimpor ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(jsonData)); // Menyimpan data karyawan setelah impor
+            alert('Data imported successfully!');
+        };
+        reader.readAsBinaryString(file);
+    }
+});
+// Tambahkan kolom checkbox di tabel karyawan
+function addCheckboxes() {
+    const table = document.getElementById('employeeTable').getElementsByTagName('thead')[0];
+    const headerRow = table.rows[0];
+    const checkboxHeader = document.createElement('th');
+    checkboxHeader.innerHTML = '<input type="checkbox" id="selectAll">';
+    headerRow.insertBefore(checkboxHeader, headerRow.firstChild);
+
+    const tbody = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+    Array.from(tbody.rows).forEach(function(row) {
+        const checkboxCell = document.createElement('td');
+        checkboxCell.innerHTML = '<input type="checkbox" class="selectRow">';
+        row.insertBefore(checkboxCell, row.firstChild);
+    });
+
+    // Event listener untuk checkbox "Select All"
+    document.getElementById('selectAll').addEventListener('change', function() {
+        const checkboxes = document.querySelectorAll('.selectRow');
+        checkboxes.forEach(checkbox => checkbox.checked = this.checked);
+    });
+}
+
+// Tambahkan tombol untuk menghapus data yang dipilih
+function addDeleteButton() {
+    const deleteSelectedButton = document.createElement('button');
+    deleteSelectedButton.textContent = 'Delete Selected';
+    deleteSelectedButton.id = 'deleteSelectedButton';
+    document.getElementById('mainPage').insertBefore(deleteSelectedButton, document.getElementById('employeeTable'));
+
+    // Fungsi untuk menghapus data yang dipilih
+    deleteSelectedButton.addEventListener('click', function() {
+        const checkboxes = document.querySelectorAll('.selectRow:checked');
+        const tbody = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+
+        checkboxes.forEach(checkbox => {
+            const row = checkbox.closest('tr');
+            tbody.removeChild(row);
+        });
+
+        saveEmployeeData(); // Simpan data setelah menghapus karyawan
+    });
+}
+
+// Panggil fungsi untuk menambahkan checkboxes dan tombol delete setelah memuat data karyawan
+window.onload = function() {
+    const currentUser = localStorage.getItem('currentUser');
+    if (currentUser) {
+        document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('mainPage').style.display = 'block';
+        loadEmployeeData(); // Memuat data karyawan jika sudah login
+        addCheckboxes(); // Tambahkan checkboxes
+        addDeleteButton(); // Tambahkan tombol delete
+    } else {
+        document.getElementById('loginPage').style.display = 'block';
+        document.getElementById('mainPage').style.display = 'none';
+    }
+};
+        
+        // Handle file selection
+        document.getElementById('importFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const data = event.target.result;
+                    const workbook = XLSX.read(data, { type: 'binary' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(sheet);
+                    
+                    // Loop untuk memasukkan data ke dalam tabel
+                    const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+                    jsonData.forEach((employee) => {
+                        const row = table.insertRow();
+                        
+                        // Loop untuk mengisi setiap kolom berdasarkan data
+                        Object.values(employee).forEach((value) => {
+                            const cell = row.insertCell();
+                            cell.textContent = value;
+                        });
+                        
+                        // Tambahkan kolom untuk actions (edit & delete)
+                        const actionsCell = row.insertCell();
+                        actionsCell.innerHTML = `<button onclick="editRow(this)">Edit</button> <button onclick="deleteRow(this)">Delete</button>`;
+                    });
+                };
+                reader.readAsBinaryString(file);
+            }
+        });
+ 
+        // Filter functionality
+        document.getElementById('filterInput').addEventListener('keyup', function() {
+            const filter = this.value.toLowerCase();
+            const rows = document.getElementById('employeeTable').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            
+            Array.from(rows).forEach(function(row) {
+                let match = false;
+                const cells = row.getElementsByTagName('td');
+                Array.from(cells).forEach(function(cell) {
+                    if (cell.textContent.toLowerCase().includes(filter)) {
+                        match = true;
+                    }
+                });
+                row.style.display = match ? '' : 'none';
+            });
+        });
+    
+        // Fungsi untuk menyimpan perubahan ke localStorage
+        document.getElementById('saveChangesButton').addEventListener('click', function() {
+            const table = document.getElementById('employeeTable').getElementsByTagName('tbody')[0];
+            const rows = table.rows;
+            const updatedData = [];
+
+            // Loop melalui setiap baris tabel untuk menyimpan data
+            for (let i = 0; i < rows.length; i++) {
+                const cells = rows[i].cells;
+                const rowData = {
+                    name: cells[0].textContent.trim(),
+                    nik: cells[1].textContent.trim(),
+                    position: cells[2].textContent.trim(),
+                    serviceManager: cells[3].textContent.trim(),
+                    region: cells[4].textContent.trim(),
+                    cluster: cells[5].textContent.trim(),
+                    phone: cells[6].textContent.trim(),
+                    email: cells[7].textContent.trim(),
+                    ktp: cells[8].textContent.trim(),
+                    joinDate: cells[9].textContent.trim(),
+                    licenseStatus: cells[10].textContent.trim()
+                };
+                updatedData.push(rowData);
+            }
+
+            // Simpan data ke localStorage
+            localStorage.setItem('employeeData', JSON.stringify(updatedData));
+            alert('Changes saved successfully!');
+        });
+
+</script>
